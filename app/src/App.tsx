@@ -99,8 +99,16 @@ export default function App() {
         takeBack: () => setSheet({ kind: "takeBack", item: current }),
         addNew: () => setSheet({ kind: "direct", item: current }),
         pledge: () => setSheet({ kind: "pledge", item: current }),
-        setStatus: s => run(() => api.setStatus(current.id, s),
-          s === "approved" ? "Approved" : "Marked not now"),
+        setStatus: async s => {
+          await run(() => api.setStatus(current.id, s),
+            s === "approved" ? "Approved"
+              : s === "declined" ? "Marked not now"
+              : s === "purchased" ? "Moved to Got it"
+              : "Back on the list");
+          // once it is bought it is off the list, so staying on its page strands her
+          if (s === "purchased") go("list");
+        },
+        saveNotes: text => run(() => api.updateItem(current.id, { notes: text }), "Note saved"),
         fulfill: (id, done) => run(() => api.fulfill(id, done), done ? "Marked paid" : "Marked unpaid"),
       }} />;
     }

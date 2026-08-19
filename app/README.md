@@ -20,7 +20,6 @@ is compiled into the browser bundle, where a key is readable by anyone.
 | `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` | Supabase → Project Settings → API | Yes |
 | `FIRECRAWL_API_KEY` | firecrawl.dev | Optional — see *Reading links* |
 | `CLOUDINARY_CLOUD_NAME` | Cloudinary dashboard | Recommended |
-| `CLOUDINARY_UPLOAD_PRESET` | Cloudinary → Settings → Upload | Only for photo upload |
 
 ## Setting it up
 
@@ -69,6 +68,10 @@ retailer's own URL, which works until it doesn't.
 Items with no image are not blank: the name is set as the picture, shrinking to a monogram
 at thumbnail size.
 
+**Not built yet:** uploading her own photo or screenshot. The spec's screenshot fallback is a
+v1.1 item — for now an unreadable link means typing the name and price, with the monogram
+tile standing in for the picture.
+
 ## The share sheet (iOS)
 
 So she never has to leave the shop. Build a Shortcut:
@@ -84,6 +87,19 @@ invalidates the Shortcut too — update its header afterwards.
 
 On Android the same endpoint is reachable from the manifest's `share_target`; no Shortcut
 needed.
+
+## Tests
+
+```
+npm test        # parser and money/permission rules, no browser needed
+npm run test:ui # drives the built app in Chromium against a fake API
+```
+
+`tests/rules.test.mjs` covers the money invariants and which statuses each role may set.
+`tests/scrape.test.mjs` runs the parser against real Open Graph and schema.org markup
+shapes, plus a login wall and a dead network. `tests/ui.test.mjs` drives the real screens
+against a stand-in API that enforces the same rules the functions do, so refusals are
+exercised alongside the happy paths.
 
 ## Development
 

@@ -3,7 +3,9 @@ import { db, json, handler, requireParent, b58, sha, HttpError } from "../lib/co
 /** Regenerates every link in the household. Old links die immediately. */
 export default handler(async (req, link) => {
   requireParent(link);
-  const origin = new URL(req.url).origin;
+  // Netlify routes functions through an internal host, so req.url is not reliably the
+  // site's own origin — a link built from it can point somewhere nobody can open.
+  const origin = process.env.URL ?? new URL(req.url).origin;
 
   const { data: people, error } = await db.from("access_links")
     .select("id, display_name, role").eq("household_id", link.household_id).is("revoked_at", null);

@@ -1,5 +1,5 @@
 import {
-  db, json, handler, loadState, requireTeen, requireParent, HttpError, type Link,
+  allowedStatusFor, db, json, handler, loadState, requireTeen, HttpError, type Link,
 } from "../lib/core.ts";
 
 type Body = {
@@ -26,9 +26,10 @@ export default handler(async (req, link: Link) => {
   const body = (await req.json()) as Body;
 
   if (body.action === "status") {
-    requireParent(link);
-    if (!["approved", "declined", "open"].includes(body.status ?? "")) {
-      throw new HttpError(400, "Not a status a parent can set");
+    // Approving is the parents' call; marking something bought is hers. Neither can
+    // reach into the other's statuses.
+    if (!allowedStatusFor(link.role).includes(body.status ?? "")) {
+      throw new HttpError(403, "Not a status you can set");
     }
     await db.from("items").update({ status: body.status, updated_at: new Date().toISOString() })
       .eq("id", body.id!).eq("household_id", link.household_id);

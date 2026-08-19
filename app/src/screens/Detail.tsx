@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type { State } from "../types";
 import { BUCKETS, C, onItemBy, unfulfilledOn } from "../money";
 import { Shot } from "../ui";
@@ -7,9 +8,12 @@ export function Detail({ state, itemId, go, actions }: {
   actions: {
     allocate: () => void; takeBack: () => void; addNew: () => void;
     pledge: () => void; setStatus: (s: string) => void; fulfill: (id: string, done: boolean) => void;
+    saveNotes: (text: string) => void;
   };
 }) {
   const item = state.items.find(i => i.id === itemId);
+  const [notes, setNotes] = useState(item?.notes ?? "");
+  useEffect(() => { setNotes(item?.notes ?? ""); }, [item?.id, item?.notes]);
   if (!item) return null;
 
   const isParent = state.me.role === "parent";
@@ -79,7 +83,20 @@ export function Detail({ state, itemId, go, actions }: {
             <button className="btn sm dark" onClick={() => actions.setStatus("approved")}>Approve</button>
             <button className="btn sm quiet" onClick={() => actions.setStatus("declined")}>Not now</button>
           </div>
-        ) : null}
+        ) : (
+          <>
+            <button className="btn sm quiet" style={{ marginBottom: 12 }}
+              onClick={() => actions.setStatus(item.status === "purchased" ? "open" : "purchased")}>
+              {item.status === "purchased" ? "Put it back on the list" : "Got it — I bought this"}
+            </button>
+            <div className="field">
+              <label>Notes</label>
+              <textarea rows={2} value={notes} placeholder="Size 8 · she has two other pairs"
+                onChange={e => setNotes(e.target.value)}
+                onBlur={() => notes !== (item.notes ?? "") && actions.saveNotes(notes)} />
+            </div>
+          </>
+        )}
 
         {history.length ? <span className="eyebrow">History</span> : null}
         {history.map(e => {

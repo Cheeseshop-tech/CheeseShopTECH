@@ -16,7 +16,13 @@ export const json = (body: unknown, status = 200) =>
   });
 
 export class HttpError extends Error {
-  constructor(public status: number, message: string) { super(message); }
+  status: number;
+  // written out rather than a parameter property so this module can be run directly
+  // by node's type-stripping, which the rule tests rely on
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
+  }
 }
 
 export type Role = "teen" | "parent";
@@ -39,9 +45,20 @@ export type Entry = {
 const misses = new Map<string, { n: number; until: number }>();
 const THROTTLE = { max: 20, windowMs: 60_000 };
 
-export async function authenticate(req: Request): Promise<Link> {
-  const url = new URL(req.url);
-  const token = req.headers.get("x-dm-token") ?? url.searchParams.get("t") ?? "";
+/**
+ * Statuses each role may set. Kept here as a pure rule so it can be tested without
+ * a database, and so the two roles can't quietly drift apart.
+ */
+export const allowedStatusFor = (role: Role): string[] =>
+  role === "parent" ? ["approved", "declined", "open"] : ["purchased", "open"];
+
+export async function authenticate(req: Request, allowQueryToken = false): Promise<Link> {
+  // A token in a query string ends up in server logs and Referer headers, which is the
+  // whole reason it normally travels in the URL hash. Only the share endpoint accepts
+  // one that way, because an iOS Shortcut cannot always set a header.
+  const token = req.headers.get("x-dm-token")
+    ?? (allowQueryToken ? new URL(req.url).searchParams.get("t") : null)
+    ?? "";
   if (!token) throw new HttpError(401, "No link token");
 
   const ip = req.headers.get("x-nf-client-connection-ip") ?? "unknown";
@@ -132,10 +149,13 @@ export const b58 = () => {
 };
 
 /** Wraps a handler so thrown HttpErrors become clean JSON and nothing else leaks. */
-export const handler = (fn: (req: Request, link: Link) => Promise<Response>) =>
+export const handler = (
+  fn: (req: Request, link: Link) => Promise<Response>,
+  opts: { allowQueryToken?: boolean } = {}
+) =>
   async (req: Request): Promise<Response> => {
     try {
-      const link = await authenticate(req);
+      const link = await authenticate(req, opts.allowQueryToken === true);
       return await fn(req, link);
     } catch (err) {
       if (err instanceof HttpError) return json({ error: err.message }, err.status);

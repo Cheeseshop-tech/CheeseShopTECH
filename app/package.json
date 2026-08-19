@@ -8,7 +8,9 @@
     "dev:web": "vite",
     "build": "tsc -b && vite build",
     "check": "tsc -b --noEmit false && tsc -p tsconfig.functions.json",
-    "mint": "node scripts/mint-links.mjs"
+    "mint": "node scripts/mint-links.mjs",
+    "test": "node --experimental-strip-types tests/scrape.test.mjs && node --experimental-strip-types tests/rules.test.mjs",
+    "test:ui": "vite preview --port 4173 & sleep 3 && node tests/ui.test.mjs; kill %1"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",

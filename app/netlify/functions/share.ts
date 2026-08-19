@@ -37,5 +37,5 @@ export default handler(async (req, link) => {
   if (error) throw new HttpError(500, "Could not save it");
 
   return json({ ok: true, name: found.name, bucket, filled: found.confidence > 0 });
-});
+}, { allowQueryToken: true });
 export const config = { path: "/api/share" };

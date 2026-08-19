@@ -50,8 +50,10 @@ export function List({ state, go, act }: {
   );
   const setView = (m: "grid" | "list") => { localStorage.setItem("dm.mode", m); setMode(m); };
 
+  const [showGot, setShowGot] = useState(false);
   const list = inBucket(state.items, tab);
   const total = list.reduce((n, i) => n + (i.price_cents ?? 0), 0);
+  const got = state.items.filter(i => i.bucket === tab && i.status === "purchased");
 
   const money = (
     <div className="money">
@@ -129,6 +131,23 @@ export function List({ state, go, act }: {
             <p className="note">{list.length} open · {C(total)} all in</p>
           </>
         )}
+        {got.length ? (
+          <>
+            <button className="btn sm quiet" style={{ marginTop: 18 }}
+              onClick={() => setShowGot(v => !v)}>
+              Got it · {got.length}
+            </button>
+            {showGot ? got.map(it => (
+              <div className="led" key={it.id}>
+                <button className="w ropen" onClick={() => go("detail", it.id)}>
+                  <div className="t">{it.name}</div>
+                  <div className="m">{it.source_site}</div>
+                </button>
+                <div className="a num">{C(it.price_cents ?? 0)}</div>
+              </div>
+            )) : null}
+          </>
+        ) : null}
       </div>
     </>
   );
