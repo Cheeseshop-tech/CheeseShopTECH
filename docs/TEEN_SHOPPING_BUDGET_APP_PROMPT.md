@@ -2,7 +2,7 @@
 
 **Status:** PROMPT + DECISION SHEET. No app code written yet.
 **Prepared by:** Claude Code, at the request of Rick Posada
-**Date:** 2026-08-19 (rev. 2 — access model, budget model, and fallback UI decided)
+**Date:** 2026-08-19 (rev. 3 — adds her savings balance; rev. 2 set access, budget, fallback UI)
 **Input doc:** "Teen Shopping Budget App — Spec" (chat-prepared, same date)
 
 Two things live here:
@@ -22,12 +22,19 @@ Two things live here:
 | Goals funding | A single shared pot of parent money, entered by the parents. |
 | Her savings | Tracked separately per Goal, alongside parent money. |
 | Parent actions | Approve/decline, set the pot, and pledge to specific Goals. |
+| Her savings | A general balance she banks money into, plus allocations out of it onto Goals. |
 
 Those last three interlock, so state the relationship plainly: **the pot is the ceiling, pledges
 are allocations out of it.** Parents enter one number (say $300). Pledging $80 toward the boots
 draws that $80 down, leaving $220 unallocated. Her own saved money is a separate track that never
 touches the pot. That is what keeps "budget" and "pledges" from becoming two systems that
 disagree.
+
+Her money works the same way, one layer down. Babysitting money lands in **her balance** as a
+deposit; moving $20 of it onto the boots is an allocation out of that balance. She can also put
+money straight onto a Goal without it passing through the balance, for when she already knows
+where it's going. So a Goal's progress bar has two funding sources (hers, parents') and each
+source has a pot behind it.
 
 ---
 
@@ -39,7 +46,9 @@ disagree.
 
 Build a mobile-first web app for a 15-year-old to catalog things she wants to buy, sorted into
 Needs / Wants / Goals, with a linked parent view where her parents can approve items, fund a
-shared savings pot, and pledge from it toward specific Goals. It is a private family app — three
+shared savings pot, and pledge from it toward specific Goals. She tracks her own savings the same
+way: money she earns banks into a balance, and she puts it toward the bigger purchases she's
+saving for. It is a private family app — three
 known users, no signups, no public listing, no growth features. Target: a working v1 in a weekend
 of focused build time.
 
@@ -132,22 +141,37 @@ items
   created_at    timestamptz
   updated_at    timestamptz
 
-contributions          -- the money ledger; progress is derived, never stored as a total
+contributions          -- the money ledger; every total in the app is derived from this table
   id            uuid
-  item_id       uuid -> items.id
+  household_id  uuid
+  item_id       uuid -> items.id     -- NULL only for a 'deposit' into her balance
   link_id       uuid -> access_links.id   -- who did it, for attribution
   source        text  -- 'teen' | 'parent'
-  kind          text  -- 'saved' (her money) | 'pledged' (an allocation from the pot)
-  amount_cents  int
+  kind          text
+    -- source='teen':   'deposit'   money in, item_id NULL      -> her balance += amount
+    --                  'allocate'  item_id set                 -> her balance -= amount, goal += amount
+    --                  'direct'    item_id set                 -> goal += amount, balance untouched
+    -- source='parent': 'pledged'   item_id set                 -> pot allocated += amount, goal += amount
+  amount_cents  int          -- may be negative on 'allocate' to pull money back off a Goal
   fulfilled_at  timestamptz  -- pledges only: set when the money actually changes hands
-  note          text
+  note          text         -- 'babysitting the Hendersons', etc.
   created_at    timestamptz
 ```
 
+Three `kind` values on her side rather than one is the difference between a balance that
+reconciles and a balance that quietly double-counts. `deposit` is money entering, `allocate` moves
+money that already exists, and `direct` is money that never touched the balance. Only `deposit`
+increases what she has; only `allocate` decreases it.
+
 **Derived figures — compute these, never store them:**
 
-- Goal progress = `sum(saved) + sum(pledged)` over `price_cents`, rendered as two segments so her
-  money and parent money stay visually distinct.
+- Goal progress = `sum(allocate + direct) + sum(pledged)` over `price_cents`, rendered as two
+  segments so her money and parent money stay visually distinct.
+- **Her balance** = `sum(deposit) − sum(allocate)`. Show it at the top of the Goals section.
+- Allocating more than her balance holds is **blocked**, unlike the parent pot's soft warning. The
+  pot is a promise and can be optimistic; her balance is money that either exists or doesn't.
+- Pulling money back off a Goal is a negative `allocate` — she will change her mind about which
+  thing she's saving for, and the app should let her without deleting history.
 - **Pot remaining** = `goal_budget_cents − sum(pledged on non-archived goals)`. This is the number
   parents care about; show it at the top of the parent Goals view.
 - If a pledge would push the pot negative, **warn but allow** — show the pot as over-allocated in
@@ -167,8 +191,10 @@ contributions          -- the money ledger; progress is derived, never stored as
 - **Auto-filled and manually-entered items are visually identical.** No badge, no icon, no
   differing styling anywhere in the app. `entry_method` is recorded for diagnostics only.
 - Within a section, sort by `priority` then `sort_order`; drag-to-reorder within a priority band.
-- Section header shows a running total of open items in that bucket. The Goals header also shows
-  the pot's remaining balance.
+- Section header shows a running total of open items in that bucket. The Goals section is topped
+  by a **savings card**: her balance, the parents' unallocated pot, and an "Add money" button.
+  Tapping the card opens Savings (screen 5). No fourth tab — a fourth bucket would cost layout on
+  every screen for something that is one card.
 - Empty states matter — an empty Goals tab should say what a Goal is and offer "Add one."
 
 **2. Add Item** (full-screen sheet from a persistent `+` button)
@@ -187,8 +213,18 @@ contributions          -- the money ledger; progress is derived, never stored as
 - Full image, name, price, source link (opens the original, `noreferrer`), notes, bucket,
   priority, status.
 - For Goals only: two-segment progress bar (her saved / parent pledged, with unfulfilled pledges
-  hatched), amount remaining, and "+ Add savings" writing a `contributions` row.
+  hatched), amount remaining, and "+ Put money toward this" — which offers her balance first
+  (an `allocate`, capped at the balance) and "add new money" second (a `direct`). Also "take money
+  back off this," writing the negative `allocate`.
 - History strip: when it was added, and any parent actions taken, attributed by name.
+
+**5. Savings** (teen)
+- Big number: current balance. Two actions: **Add money** (a deposit, with an optional note like
+  "babysitting") and **Put toward a Goal** (pick a Goal, pick an amount, capped at the balance).
+- Below: the ledger, newest first — deposits, allocations, and money pulled back, each with its
+  note and date. This is the screen that makes the saving feel real, so give it more visual care
+  than a transaction list normally gets.
+- If the balance is 0 and there are no entries, say what this is for rather than showing "$0.00."
 
 **4. Parent View** (same app, parent token)
 - Header: **the pot** — total budget (tap to edit), amount allocated, amount unallocated. This is
@@ -196,7 +232,8 @@ contributions          -- the money ledger; progress is derived, never stored as
 - Same three buckets, read-only, plus per item: **Approve**, **Decline**, and on Goals,
   **Pledge $__** (drawing from the pot) and a checkbox to mark a pledge fulfilled.
 - "New since you last looked" filter, driven by `access_links.last_seen_at`.
-- Household totals: open request value by bucket, pledged vs. fulfilled, total purchased.
+- Household totals: open request value by bucket, pledged vs. fulfilled, total purchased, and
+  **her balance** (read-only — parents can see what she's saved but never move it).
 
 ## Scraping behavior (`/api/scrape`)
 
@@ -228,12 +265,15 @@ Chores/allowance tracking. Retailer affiliate links.
 4. Items land in the right bucket and can be re-bucketed and reordered by drag on touch.
 5. Parents set the pot to $300; a $80 pledge on one Goal shows $220 unallocated; the Goal's bar
    shows her savings and the pledge as separate segments, with the pledge hatched until fulfilled.
-6. A parent token calling the item create/edit/delete endpoints directly gets 403 — verified with
+6. She deposits $40, allocates $25 to a Goal: balance reads $15, the Goal's teen segment reads
+   $25, and attempting to allocate $30 from a $15 balance is refused server-side. Pulling the $25
+   back restores the balance to $40 and leaves both entries visible in the ledger.
+7. A parent token calling the item create/edit/delete endpoints directly gets 403 — verified with
    curl against the deployed Functions, not by checking that the button is hidden.
-7. Rotating links from a parent token invalidates all previous links immediately; the old link
+8. Rotating links from a parent token invalidates all previous links immediately; the old link
    shows the "no longer valid" screen.
-8. A change on one device appears on the other within ~30s, or immediately on refocus.
-9. Tested at 390px wide (iPhone viewport) with no horizontal scroll anywhere.
+9. A change on one device appears on the other within ~30s, or immediately on refocus.
+10. Tested at 390px wide (iPhone viewport) with no horizontal scroll anywhere.
 
 ## Deliverables
 
@@ -261,6 +301,9 @@ link leaks. Seed script with realistic items so the UI can be reviewed before re
 - **Goals funded from a parent-entered pot, her savings tracked separately, parents can also
   approve/decline and pledge per Goal.** Reconciled by making pledges allocations *from* the pot
   rather than a parallel promise, so the two numbers can never disagree.
+- **She can bank savings generally and also put money straight onto a Goal.** Built as one ledger
+  with a balance on her side mirroring the pot on the parents' side, so "how much do I have" and
+  "how much is on the boots" are always the same money counted once.
 
 ## Still open
 
@@ -268,10 +311,13 @@ link leaks. Seed script with realistic items so the UI can be reviewed before re
 **a.** Does the pot ever refill on a schedule, or do you just top it up by hand when it runs low?
 > **Recommended:** top up by hand. A recurring reset needs a rollover rule and date handling, which
 > is real work for a number you'll edit six times a year.
-**b.** When she marks a Goal purchased, do the pledges against it get consumed (pot stays down) or
-released back to the pot?
+**b.** When she marks a Goal purchased, do the money committed to it (her allocations and the
+parent pledges) get consumed, or released back to her balance and the pot?
 > **Recommended:** consumed — the money was spent. But confirm, because the opposite is defensible
 > if a pledge sometimes goes unspent.
+**e.** Should Needs and Wants also be fundable from her balance, or is spending money only ever
+tracked against Goals?
+> **Recommended:** Goals only. She buys a $12 lip balm without wanting to do bookkeeping about it.
 **c.** Any spending ceilings on **Needs** and **Wants**, or is the pot purely a Goals thing?
 > **Recommended:** Goals only for v1, as specified.
 **d.** Prices: sticker only, or include tax/shipping?
