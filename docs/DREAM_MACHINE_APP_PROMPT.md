@@ -404,9 +404,8 @@ app read the price *out of* the image?
 *Named: **Dream Machine**, banking and budgeting. Icon label is "Dream Machine". Visual direction:
 Depop — see the Visual direction section in Part A. Dark mode: yes, following the phone.*
 
-**c.** Still open, and it is the last real unknown: **is she reviewing this before it ships, or is
-it a surprise?** If she is reviewing, the accent color and the no-image tile are worth showing her
-before I build the rest. If it is a surprise, I will pick and she can redecorate later.
+**c.** Still open: **is she reviewing this before it ships, or is it a surprise?** The mockup now
+exists either way — the question is only whether she sees it before the build starts.
 
 ### 5. Privacy
 **a.** Confirm: no analytics, no third-party scripts, no error-reporting service that receives item
@@ -425,5 +424,32 @@ content.
 — "tell me when she adds something" is a reasonable parent ask.
 > **Recommended:** if you want it, a daily email digest is far cheaper than push and gets most of
 > the value.
-**b.** Build v1 straight from your answers, or produce a clickable mockup first for her to react to
-before any backend work?
+
+*Answered: clickable mockup first — built, see below.*
+
+---
+
+## The mockup
+
+`docs/prototype/dream-machine-prototype.html` — a single self-contained file, no build step, no
+backend. Open it in a phone browser and it behaves like the app: switch buckets, add an item by
+pasting a link (try a `sephora` or `depop` URL for the auto-fill, an `instagram` one for the
+silent fallback), deposit savings, move money onto a Goal, then flip to the parent view to
+approve and pledge. State is in memory and Reset restores it.
+
+It is a **behavior** prototype, not just screens: the money rules are live, so allocating more
+than her balance is refused, pulling money back off a Goal restores it, and over-pledging turns
+the pot red. That is the fastest way to check the model is right before any of it is real.
+
+Two things it deliberately fakes: product photos are drawn stand-ins rather than scraped images,
+and "scraping" is a lookup table with four known sites. Everything else is the real design.
+
+### What building it changed in the spec above
+
+- **The parent request queue is not truncated.** It first showed only the four oldest open items,
+  which meant Goals — the ones needing a pledge decision — could sit permanently below the cut.
+- **The no-image tile has to scale.** The same treatment appears at grid size and at thumbnail
+  size, so its type is sized in container units rather than pixels; at a fixed size it overflowed
+  its own tile in the smaller slots.
+- **A tile that carries its own name doesn't repeat it underneath.** The no-image treatment sets
+  the name large inside the tile, so the caption below it drops to price and source only.

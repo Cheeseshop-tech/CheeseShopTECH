@@ -1,0 +1,556 @@
+<title>Dream Machine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@110,600;110,700;110,800&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --paper:#FAFAF8; --card:#FFFFFF; --ink:#100F0D; --ink-60:#5C5A55; --ink-30:#A9A6A0;
+  --line:#E4E1DA; --well:#F0EEE8;
+  --her:#4B2EF5; --her-soft:#E7E2FE;
+  --them:#E8A33D; --them-soft:#FBEEDA;
+  --over:#D8262C; --done:#1F8A4C;
+  --frame:#EDEAE3;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0C0B0F; --card:#16151B; --ink:#F6F5F2; --ink-60:#A5A2AC; --ink-30:#66636E;
+    --line:#26242D; --well:#1E1C24;
+    --her:#9B85FF; --her-soft:#2A2350; --them:#F0B75E; --them-soft:#3B2E17;
+    --over:#FF6B6B; --done:#4ED18A; --frame:#08070A;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0C0B0F; --card:#16151B; --ink:#F6F5F2; --ink-60:#A5A2AC; --ink-30:#66636E;
+  --line:#26242D; --well:#1E1C24;
+  --her:#9B85FF; --her-soft:#2A2350; --them:#F0B75E; --them-soft:#3B2E17;
+  --over:#FF6B6B; --done:#4ED18A; --frame:#08070A;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--frame); color:var(--ink);
+  font-family:"Public Sans",system-ui,-apple-system,Segoe UI,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,.num,.brand{font-family:Archivo,"Public Sans",system-ui,sans-serif;font-stretch:110%;margin:0}
+.num{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:2px solid var(--her);outline-offset:2px;border-radius:4px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* prototype chrome — deliberately outside the app */
+.harness{max-width:430px;margin:0 auto;padding:14px 12px 40px}
+.hbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.hlabel{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-30);
+  font-weight:600;margin-right:auto}
+.seg{display:flex;background:var(--well);border-radius:999px;padding:3px;gap:2px}
+.seg button{padding:6px 12px;border-radius:999px;font-size:12px;font-weight:600;color:var(--ink-60)}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.ghost{font-size:12px;color:var(--ink-30);padding:6px 8px;font-weight:500}
+
+/* phone */
+.phone{background:var(--paper);border-radius:26px;overflow:hidden;position:relative;
+  min-height:720px;display:flex;flex-direction:column;box-shadow:0 18px 50px rgba(0,0,0,.18)}
+.scroll{flex:1;overflow-y:auto;padding:0 16px 96px}
+.topbar{display:flex;align-items:center;gap:10px;padding:18px 16px 10px;position:sticky;top:0;
+  background:linear-gradient(var(--paper) 72%,transparent);z-index:5}
+.brand{font-size:19px;font-weight:800;letter-spacing:-.02em}
+.brand em{font-style:normal;color:var(--her)}
+.back{font-size:14px;font-weight:600;color:var(--ink-60);display:flex;align-items:center;gap:6px}
+.eyebrow{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-30);font-weight:600}
+
+/* tabs */
+.tabs{display:flex;gap:22px;padding:6px 0 14px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.tabs button{font-family:Archivo;font-stretch:110%;font-size:15px;font-weight:700;color:var(--ink-30);
+  padding-bottom:10px;margin-bottom:-15px;border-bottom:2px solid transparent}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.tabs .count{font-size:11px;font-weight:600;color:var(--ink-30);margin-left:4px}
+
+/* grid */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px}
+.tile{display:flex;flex-direction:column;gap:7px;text-align:left;width:100%;height:100%}
+.shot{aspect-ratio:4/5;border-radius:10px;overflow:hidden;position:relative;display:block;background:var(--well);container-type:inline-size}
+.shot svg{width:100%;height:100%;display:block}
+.noimg{height:100%;display:flex;flex-direction:column;justify-content:flex-end;gap:2cqw;padding:8cqw;
+  font-family:Archivo,sans-serif;font-stretch:110%}
+.noimg .n{font-size:13cqw;font-weight:800;line-height:1.05;letter-spacing:-.02em;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.noimg .s{font-size:5cqw;font-weight:600;letter-spacing:.1em;text-transform:uppercase;opacity:.55;order:-1}
+.pri{position:absolute;top:8px;left:8px;width:8px;height:8px;border-radius:50%;
+  box-shadow:0 0 0 2px rgba(255,255,255,.9)}
+.pill{position:absolute;top:8px;right:8px;font-size:9px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;padding:4px 7px;border-radius:999px;background:var(--ink);color:var(--paper)}
+.pill.ok{background:var(--done)} .pill.no{background:var(--over)}
+.chip{position:static;align-self:flex-start;font-size:9px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;padding:4px 7px;border-radius:999px;background:var(--well);color:var(--ink-60)}
+.chip.ok{background:var(--done);color:#fff} .chip.no{background:var(--over);color:#fff}
+.tname{font-size:13px;font-weight:500;line-height:1.25}
+.tmeta{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin-top:auto}
+.tprice{font-size:13px;font-weight:700}
+.tsite{font-size:10px;color:var(--ink-30);text-transform:lowercase}
+
+/* goal cards */
+.goal{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;
+  display:flex;flex-direction:column;gap:12px;width:100%;text-align:left;margin-bottom:12px}
+.goal .row{display:flex;gap:12px;align-items:flex-start}
+.goal .thumb{width:60px;height:75px;border-radius:8px;overflow:hidden;flex:none;background:var(--well);
+  container-type:inline-size}
+.goal h3{font-size:16px;font-weight:700;letter-spacing:-.01em;line-height:1.15}
+.goal .of{font-size:12px;color:var(--ink-60);margin-top:3px}
+.bar{height:9px;border-radius:999px;background:var(--well);display:flex;overflow:hidden}
+.bar i{display:block;height:100%}
+.bar .h{background:var(--her)} .bar .t{background:var(--them)}
+.bar .p{background:repeating-linear-gradient(45deg,var(--them),var(--them) 3px,transparent 3px,transparent 6px);
+  border:0;background-color:var(--them-soft)}
+.key{display:flex;gap:14px;font-size:11px;color:var(--ink-60);flex-wrap:wrap}
+.key b{font-weight:600;color:var(--ink)}
+.dot{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:5px;vertical-align:-1px}
+
+/* money header */
+.money{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:16px}
+.money .two{display:flex;gap:10px}
+.money .half{flex:1;background:var(--well);border-radius:10px;padding:11px 12px}
+.money .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-30);font-weight:600}
+.money .fig{font-size:22px;font-weight:800;margin-top:3px;letter-spacing:-.02em}
+.money .fig.her{color:var(--her)} .money .fig.them{color:var(--them)}
+
+/* forms + buttons */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-60);margin-bottom:6px}
+.field input,.field textarea,.field select{width:100%;background:var(--well);border:0;border-radius:10px;
+  padding:13px 14px;font-size:15px;color:var(--ink);font-family:inherit}
+.field input::placeholder{color:var(--ink-30)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips button{padding:9px 14px;border-radius:999px;background:var(--well);font-size:13px;font-weight:600;color:var(--ink-60)}
+.chips button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.btn{display:block;width:100%;background:var(--her);color:#fff;border-radius:999px;padding:15px;
+  font-weight:600;font-size:15px;text-align:center}
+.btn.dark{background:var(--ink);color:var(--paper)}
+.btn.quiet{background:var(--well);color:var(--ink)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btn.sm{padding:11px;font-size:13px}
+.pair{display:flex;gap:8px}
+.pair>.btn{flex:1 1 0;min-width:0}
+
+/* detail + ledger */
+.hero{aspect-ratio:4/5;border-radius:14px;overflow:hidden;background:var(--well);margin-bottom:16px;
+  container-type:inline-size}
+.led{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.led .w{flex:1}
+.led .t{font-size:14px;font-weight:500}
+.led .m{font-size:11px;color:var(--ink-30);margin-top:2px}
+.led .a{font-size:14px;font-weight:700}
+.led .a.pos{color:var(--done)} .led .a.neg{color:var(--ink-60)}
+.empty{text-align:center;padding:44px 24px;color:var(--ink-60);font-size:14px;line-height:1.5}
+.empty h3{font-size:18px;margin-bottom:8px;color:var(--ink)}
+
+/* nav */
+.nav{position:absolute;left:0;right:0;bottom:0;display:flex;background:var(--card);
+  border-top:1px solid var(--line);padding:9px 8px 22px}
+.nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;
+  font-weight:600;color:var(--ink-30);letter-spacing:.04em}
+.nav button[aria-current="page"]{color:var(--ink)}
+.nav .add{background:var(--her);color:#fff;width:46px;height:46px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:400;margin:-14px 0 0;flex:none}
+.navwrap{display:flex;align-items:center;gap:4px;width:100%}
+.note{font-size:11px;color:var(--ink-30);line-height:1.5;margin-top:14px}
+.toast{position:absolute;left:16px;right:16px;bottom:96px;background:var(--ink);color:var(--paper);
+  padding:12px 16px;border-radius:12px;font-size:13px;font-weight:500;text-align:center;
+  animation:rise .2s ease-out}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.warn{background:var(--over);color:#fff;border-radius:10px;padding:10px 12px;font-size:12px;font-weight:500;margin-bottom:12px}
+.legend{font-size:11px;color:var(--ink-60);line-height:1.6;background:var(--well);border-radius:10px;padding:12px;margin-top:16px}
+</style>
+
+<div class="harness">
+  <div class="hbar">
+    <span class="hlabel">Dream Machine · clickable mockup</span>
+    <div class="seg" id="who">
+      <button data-who="teen" aria-pressed="true">Her phone</button>
+      <button data-who="parent" aria-pressed="false">Parent view</button>
+    </div>
+    <button class="ghost" id="reset">Reset</button>
+  </div>
+  <div class="phone" id="phone"></div>
+</div>
+
+<script>
+const C = c => (c<0?"−":"") + "$" +
+  (Math.abs(c)/100).toFixed(Math.abs(c) % 100 ? 2 : 0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+const uid = () => "i" + Math.random().toString(36).slice(2, 8);
+
+const ART = {
+  gloss:(a,b)=>`<svg viewBox="0 0 80 100"><rect width="80" height="100" fill="${a}"/><rect x="33" y="30" width="14" height="46" rx="7" fill="${b}"/><rect x="35" y="18" width="10" height="14" rx="3" fill="${b}" opacity=".55"/><circle cx="40" cy="52" r="4" fill="${a}" opacity=".5"/></svg>`,
+  boots:(a,b)=>`<svg viewBox="0 0 80 100"><rect width="80" height="100" fill="${a}"/><path d="M26 22h13v40c0 6 4 8 10 10l6 3v8H26z" fill="${b}"/><path d="M26 73h29v8H26z" fill="${b}" opacity=".6"/><circle cx="32" cy="34" r="2" fill="${a}"/><circle cx="32" cy="44" r="2" fill="${a}"/></svg>`,
+  jacket:(a,b)=>`<svg viewBox="0 0 80 100"><rect width="80" height="100" fill="${a}"/><path d="M28 24l12 6 12-6 10 8-4 12 4 34H18l4-34-4-12z" fill="${b}"/><path d="M40 30v48" stroke="${a}" stroke-width="2.5"/></svg>`,
+  cam:(a,b)=>`<svg viewBox="0 0 80 100"><rect width="80" height="100" fill="${a}"/><rect x="14" y="34" width="52" height="34" rx="6" fill="${b}"/><rect x="32" y="27" width="16" height="8" rx="2" fill="${b}"/><circle cx="40" cy="51" r="12" fill="${a}"/><circle cx="40" cy="51" r="6" fill="${b}"/></svg>`,
+  cream:(a,b)=>`<svg viewBox="0 0 80 100"><rect width="80" height="100" fill="${a}"/><rect x="26" y="38" width="28" height="34" rx="5" fill="${b}"/><rect x="30" y="28" width="20" height="11" rx="3" fill="${b}" opacity=".6"/><rect x="31" y="49" width="18" height="3" rx="1.5" fill="${a}"/></svg>`,
+  bag:(a,b)=>`<svg viewBox="0 0 80 100"><rect width="80" height="100" fill="${a}"/><path d="M20 42h40l-4 34H24z" fill="${b}"/><path d="M32 42V32a8 8 0 0116 0v10" stroke="${b}" stroke-width="3.5" fill="none"/></svg>`,
+  phones:(a,b)=>`<svg viewBox="0 0 80 100"><rect width="80" height="100" fill="${a}"/><path d="M22 56V46a18 18 0 0136 0v10" stroke="${b}" stroke-width="5" fill="none"/><rect x="15" y="52" width="13" height="22" rx="6" fill="${b}"/><rect x="52" y="52" width="13" height="22" rx="6" fill="${b}"/></svg>`
+};
+const TINT = [["#EFE9FF","#4B2EF5"],["#FBEEDA","#C97E1C"],["#E6F2EC","#1F8A4C"],["#FBE7EC","#C2415C"],["#EAEDF6","#2F4B85"],["#F4EEE6","#8A6034"]];
+
+const SEED = () => ({
+  pot: 30000,
+  items: [
+    {id:"a1", bucket:"need", name:"Glow Recipe dew drops", price:3400, site:"sephora.com", art:"gloss", tint:0, pri:1, status:"open"},
+    {id:"a2", bucket:"need", name:"CeraVe cleanser refill", price:1699, site:"target.com", art:"cream", tint:2, pri:1, status:"open"},
+    {id:"a3", bucket:"need", name:"Laneige lip mask", price:2400, site:"sephora.com", art:"gloss", tint:3, pri:2, status:"approved"},
+    {id:"a4", bucket:"need", name:"Salicylic toner", price:1200, site:"ulta.com", art:null, tint:4, pri:3, status:"open"},
+    {id:"b1", bucket:"want", name:"90s suede jacket", price:6800, site:"depop.com", art:"jacket", tint:5, pri:1, status:"open"},
+    {id:"b2", bucket:"want", name:"Doc Martens, worn in", price:7500, site:"depop.com", art:"boots", tint:1, pri:2, status:"open"},
+    {id:"b3", bucket:"want", name:"Beaded shoulder bag", price:2800, site:"instagram.com", art:null, tint:0, pri:2, status:"open"},
+    {id:"b4", bucket:"want", name:"Vintage Levi's 501s", price:5200, site:"depop.com", art:"jacket", tint:4, pri:1, status:"declined"},
+    {id:"c1", bucket:"goal", name:"Canon Sure Shot film camera", price:18500, site:"ebay.com", art:"cam", tint:4, pri:1, status:"open"},
+    {id:"c2", bucket:"goal", name:"Sony headphones", price:24800, site:"bestbuy.com", art:"phones", tint:0, pri:2, status:"open"},
+    {id:"c3", bucket:"goal", name:"Coach shoulder bag, resale", price:12000, site:"therealreal.com", art:"bag", tint:1, pri:2, status:"approved"}
+  ],
+  ledger: [
+    {id:"l1", item:null, source:"teen", kind:"deposit", amt:6000, note:"Babysitting — the Hendersons", when:"Aug 2"},
+    {id:"l2", item:"c1", source:"teen", kind:"allocate", amt:4000, note:"", when:"Aug 3"},
+    {id:"l3", item:null, source:"teen", kind:"deposit", amt:2500, note:"Birthday money from Nonna", when:"Aug 9"},
+    {id:"l4", item:"c1", source:"parent", kind:"pledged", amt:6000, note:"", who:"Dad", done:false, when:"Aug 9"},
+    {id:"l5", item:"c3", source:"teen", kind:"direct", amt:1500, note:"Dog-walking", when:"Aug 14"},
+    {id:"l6", item:"c2", source:"parent", kind:"pledged", amt:5000, note:"", who:"Mom", done:true, when:"Aug 15"}
+  ]
+});
+
+let S, view = {who:"teen", screen:"list", tab:"need", item:null, toast:null, draft:null};
+const load = () => { S = SEED(); };
+load();
+
+const balance = () => S.ledger.filter(l=>l.source==="teen").reduce((n,l)=>
+  n + (l.kind==="deposit" ? l.amt : l.kind==="allocate" ? -l.amt : 0), 0);
+const allocated = () => S.ledger.filter(l=>l.kind==="pledged").reduce((n,l)=>n+l.amt,0);
+const onItem = (id,src) => S.ledger.filter(l=>l.item===id &&
+  (src==="teen" ? l.source==="teen" : l.kind==="pledged")).reduce((n,l)=>n+l.amt,0);
+const items = b => S.items.filter(i=>i.bucket===b && i.status!=="purchased");
+const find = id => S.items.find(i=>i.id===id);
+
+function shot(it){
+  const [bg,fg] = TINT[it.tint % TINT.length];
+  return it.art ? ART[it.art](bg,fg)
+    : `<div class="noimg" style="background:${bg};color:${fg}"><span class="n">${it.name}</span><span class="s">${it.site.split(".")[0]}</span></div>`;
+}
+const priColor = p => p===1 ? "var(--over)" : p===2 ? "var(--them)" : "var(--ink-30)";
+const statusPill = (s,cls="pill") => s==="approved" ? `<span class="${cls} ok">Approved</span>`
+  : s==="declined" ? `<span class="${cls} no">Not now</span>` : "";
+
+function tile(it){
+  return `<button class="tile" data-open="${it.id}">
+    <span class="shot">${shot(it)}
+      <span class="pri" style="background:${priColor(it.pri)}"></span>${statusPill(it.status)}</span>
+    ${it.art?`<span class="tname">${it.name}</span>`:""}
+    <span class="tmeta"><span class="tprice num">${C(it.price)}</span><span class="tsite">${it.site}</span></span>
+  </button>`;
+}
+
+function goalCard(it){
+  const her = onItem(it.id,"teen"), them = onItem(it.id,"parent");
+  const pct = n => Math.min(100, n/it.price*100);
+  const left = Math.max(0, it.price - her - them);
+  return `<button class="goal" data-open="${it.id}">
+    <span class="row">
+      <span class="thumb">${shot(it)}</span>
+      <span style="flex:1">
+        <h3>${it.name}</h3>
+        <span class="of num">${C(her+them)} of ${C(it.price)}${left? " · " + C(left) + " to go" : " · fully funded"}</span>
+      </span>
+      ${statusPill(it.status,"chip")}
+    </span>
+    <span class="bar"><i class="h" style="width:${pct(her)}%"></i><i class="t" style="width:${pct(them)}%"></i></span>
+    <span class="key">
+      <span><i class="dot" style="background:var(--her)"></i>She saved <b class="num">${C(her)}</b></span>
+      <span><i class="dot" style="background:var(--them)"></i>Pledged <b class="num">${C(them)}</b></span>
+    </span>
+  </button>`;
+}
+
+/* ---------- screens ---------- */
+function listScreen(){
+  const t = view.tab, list = items(t);
+  const total = list.reduce((n,i)=>n+i.price,0);
+  const head = `<div class="topbar"><h1 class="brand">Dream<em>Machine</em></h1></div>`;
+  const tabs = ["need","want","goal"].map(b=>
+    `<button data-tab="${b}" aria-selected="${b===t}">${{need:"Needs",want:"Wants",goal:"Goals"}[b]}
+      <span class="count num">${items(b).length}</span></button>`).join("");
+  let body;
+  if(!list.length){
+    body = `<div class="empty"><h3>${t==="goal"?"Nothing saved for yet":"Nothing here yet"}</h3>
+      ${t==="goal"?"A goal is something big enough to save toward — a camera, a bag, a coat you keep going back to.":"Paste a link and it lands here."}
+      <div style="margin-top:18px"><button class="btn sm" data-go="add" style="display:inline-block;padding:11px 22px;width:auto">Add something</button></div></div>`;
+  } else if(t==="goal"){
+    body = `<div class="money">
+        <div class="two">
+          <div class="half"><div class="cap">Her savings</div><div class="fig her num">${C(balance())}</div></div>
+          <div class="half"><div class="cap">Parents left</div><div class="fig them num"${S.pot-allocated()<0?' style="color:var(--over)"':''}>${C(S.pot-allocated())}</div></div>
+        </div>
+        <button class="btn sm dark" data-go="savings" style="margin-top:11px">Open savings</button>
+      </div>` + list.map(goalCard).join("");
+  } else {
+    body = `<div class="grid">${list.map(tile).join("")}</div>
+      <p class="note">${list.length} open · ${C(total)} all in</p>`;
+  }
+  return head + `<div class="scroll"><div class="tabs">${tabs}</div>${body}</div>` + nav("list");
+}
+
+function addScreen(){
+  const d = view.draft || {};
+  const tried = d.tried;
+  return `<div class="topbar"><button class="back" data-go="list">← Cancel</button></div>
+  <div class="scroll">
+    <h2 style="font-size:26px;font-weight:800;letter-spacing:-.03em;margin-bottom:16px">Add something</h2>
+    <div class="field"><label>Paste a link</label>
+      <input id="url" placeholder="sephora.com/product/…" value="${d.url||""}">
+      <p class="note">Try a <b>sephora</b> or <b>depop</b> link to watch it fill itself in — or an <b>instagram</b> one to see what happens when a site won't let us read it.</p>
+    </div>
+    <div class="field"><label>What is it</label><input id="name" value="${d.name||""}" placeholder="Name it"></div>
+    <div class="field"><label>Price</label><input id="price" inputmode="decimal" value="${d.price||""}" placeholder="0.00"></div>
+    <div class="field"><label>Which list</label>
+      <div class="chips" id="bucket">
+        ${[["need","Need"],["want","Want"],["goal","Goal"]].map(([v,l])=>
+          `<button data-b="${v}" aria-pressed="${(d.bucket||"want")===v}">${l}</button>`).join("")}
+      </div></div>
+    <div class="field"><label>How badly</label>
+      <div class="chips" id="pri">
+        ${[[1,"Must have"],[2,"Would like"],[3,"Someday"]].map(([v,l])=>
+          `<button data-p="${v}" aria-pressed="${(d.pri||2)==v}">${l}</button>`).join("")}
+      </div></div>
+    <button class="btn" id="save">Save it</button>
+    ${tried?`<p class="note">That one didn't fill in — the fields are yours to type. Nothing about the saved item will look any different.</p>`:""}
+  </div>` + nav("add");
+}
+
+function detailScreen(){
+  const it = find(view.item); if(!it) return listScreen();
+  const her = onItem(it.id,"teen"), them = onItem(it.id,"parent");
+  const isGoal = it.bucket==="goal";
+  const pct = n => Math.min(100, n/it.price*100);
+  const hist = S.ledger.filter(l=>l.item===it.id);
+  return `<div class="topbar"><button class="back" data-go="list">← ${{need:"Needs",want:"Wants",goal:"Goals"}[it.bucket]}</button></div>
+  <div class="scroll">
+    <div class="hero">${shot(it)}</div>
+    <span class="eyebrow">${it.site}</span>
+    <h2 style="font-size:24px;font-weight:800;letter-spacing:-.03em;margin:6px 0 4px">${it.name}</h2>
+    <p class="num" style="font-size:20px;font-weight:700;margin:0 0 16px">${C(it.price)}</p>
+    ${isGoal?`
+      <div class="money">
+        <span class="bar" style="margin-bottom:10px"><i class="h" style="width:${pct(her)}%"></i><i class="t" style="width:${pct(them)}%"></i></span>
+        <div class="key">
+          <span><i class="dot" style="background:var(--her)"></i>Hers <b class="num">${C(her)}</b></span>
+          <span><i class="dot" style="background:var(--them)"></i>Theirs <b class="num">${C(them)}</b></span>
+          <span>Still needed <b class="num">${C(Math.max(0,it.price-her-them))}</b></span>
+        </div>
+      </div>
+      ${view.who==="teen"?`<div class="pair" style="margin-bottom:12px">
+        <button class="btn sm" data-alloc="${it.id}">Put money toward this</button>
+        ${her?`<button class="btn sm quiet" data-unalloc="${it.id}">Take some back</button>`:""}
+      </div>`:`<div class="pair" style="margin-bottom:12px">
+        <button class="btn sm" data-pledge="${it.id}">Pledge from the pot</button>
+      </div>`}
+    `:""}
+    ${view.who==="parent"?`<div class="pair" style="margin-bottom:12px">
+      <button class="btn sm dark" data-status="${it.id}|approved">Approve</button>
+      <button class="btn sm quiet" data-status="${it.id}|declined">Not now</button></div>`:""}
+    ${view.who==="teen"?`<div class="field" style="margin-top:8px"><label>Notes</label>
+      <textarea rows="2" placeholder="Size 8 · she has two other pairs">${it.note||""}</textarea></div>`:""}
+    ${hist.length?`<span class="eyebrow">History</span>${hist.map(l=>`
+      <div class="led"><div class="w"><div class="t">${
+        l.kind==="pledged" ? (l.who||"A parent") + " pledged" + (l.done?"":" (not paid yet)")
+        : l.kind==="direct" ? "She put money straight on it" : "She moved savings over"}</div>
+        <div class="m">${l.note||l.when}</div></div>
+      <div class="a num">${C(l.amt)}</div></div>`).join("")}`:""}
+  </div>` + nav("list");
+}
+
+function savingsScreen(){
+  const b = balance();
+  const mine = S.ledger.filter(l=>l.source==="teen").slice().reverse();
+  return `<div class="topbar"><button class="back" data-go="list">← Back</button></div>
+  <div class="scroll">
+    <span class="eyebrow">Money she has</span>
+    <p class="num" style="font-size:52px;font-weight:800;letter-spacing:-.04em;margin:2px 0 4px;color:var(--her)">${C(b)}</p>
+    <p style="color:var(--ink-60);font-size:13px;margin:0 0 18px">not yet promised to anything</p>
+    <div class="pair" style="margin-bottom:8px">
+      <button class="btn sm" id="deposit">Add money</button>
+      <button class="btn sm quiet" id="toward">Put toward a goal</button>
+    </div>
+    <p class="note" style="margin-bottom:20px">Parents can see this number. They can't move it.</p>
+    <span class="eyebrow">Everything so far</span>
+    ${mine.map(l=>{
+      const g = l.item ? find(l.item) : null;
+      const label = l.kind==="deposit" ? "Money in" : l.kind==="direct"
+        ? "Straight onto " + (g?g.name:"a goal") : "Moved to " + (g?g.name:"a goal");
+      return `<div class="led"><div class="w"><div class="t">${label}</div>
+        <div class="m">${l.note || l.when}</div></div>
+        <div class="a num ${l.kind==="deposit"?"pos":"neg"}">${l.kind==="deposit"?"+":"−"}${C(l.amt)}</div></div>`;
+    }).join("")}
+  </div>` + nav("savings");
+}
+
+function parentScreen(){
+  const left = S.pot - allocated(), over = left < 0;
+  const news = S.items.filter(i=>i.status==="open").length;
+  return `<div class="topbar"><h1 class="brand">Dream<em>Machine</em></h1>
+    <span class="eyebrow" style="margin-left:auto">Parents</span></div>
+  <div class="scroll">
+    ${over?`<div class="warn">You've promised ${C(-left)} more than the pot holds. Raise it, or pull a pledge back.</div>`:""}
+    <div class="money">
+      <div class="cap">The pot</div>
+      <div class="fig num" style="color:${over?"var(--over)":"var(--ink)"}">${C(S.pot)}</div>
+      <div class="two" style="margin-top:12px">
+        <div class="half"><div class="cap">Promised out</div><div class="fig them num" style="font-size:18px">${C(allocated())}</div></div>
+        <div class="half"><div class="cap">Still free</div><div class="fig num" style="font-size:18px;color:${over?"var(--over)":"var(--done)"}">${C(left)}</div></div>
+      </div>
+      <div class="pair" style="margin-top:11px">
+        <button class="btn sm dark" id="setpot">Change the pot</button>
+        <button class="btn sm quiet" id="seesave">Her savings · ${C(balance())}</button>
+      </div>
+    </div>
+    <span class="eyebrow">Waiting on you · ${news}</span>
+    <div style="margin-top:10px">${S.items.filter(i=>i.status==="open").map(it=>`
+      <div class="goal" style="cursor:default">
+        <div class="row">
+          <span class="thumb">${shot(it)}</span>
+          <span style="flex:1"><h3 style="font-size:15px">${it.name}</h3>
+            <span class="of num">${C(it.price)} · ${{need:"Need",want:"Want",goal:"Goal"}[it.bucket]} · ${it.site}</span></span>
+        </div>
+        <div class="pair">
+          <button class="btn sm dark" data-status="${it.id}|approved">Approve</button>
+          <button class="btn sm quiet" data-status="${it.id}|declined">Not now</button>
+        </div>
+        ${it.bucket==="goal"?`<button class="btn sm" data-pledge="${it.id}">Pledge from the pot</button>`:""}
+      </div>`).join("")}</div>
+    <div class="legend"><b>What this view can't do:</b> add, edit, or delete anything on her list, or touch her savings.
+    In the real app that's enforced on the server, not by hiding buttons.</div>
+  </div>` + nav("list");
+}
+
+function nav(cur){
+  if(view.who==="parent") return `<div class="nav"><div class="navwrap">
+    <button aria-current="page">◍<span>Requests</span></button>
+    <button data-go="list">☰<span>All lists</span></button></div></div>`;
+  return `<div class="nav"><div class="navwrap">
+    <button data-go="list" aria-current="${cur==="list"?"page":"false"}">☰<span>My list</span></button>
+    <button class="add" data-go="add" aria-label="Add something">+</button>
+    <button data-go="savings" aria-current="${cur==="savings"?"page":"false"}">◈<span>Savings</span></button>
+  </div></div>`;
+}
+
+function render(){
+  const p = document.getElementById("phone");
+  const s = view.who==="parent" && view.screen!=="detail" ? parentScreen()
+    : view.screen==="add" ? addScreen()
+    : view.screen==="detail" ? detailScreen()
+    : view.screen==="savings" ? savingsScreen() : listScreen();
+  p.innerHTML = s + (view.toast?`<div class="toast">${view.toast}</div>`:"");
+  if(view.toast){ setTimeout(()=>{ view.toast=null; render(); }, 1900); }
+}
+
+function say(t){ view.toast = t; render(); }
+
+/* fake scrape — mirrors the real thing: never errors, just sometimes comes back empty */
+const CATALOG = {
+  sephora:{name:"Rare Beauty blush",price:"23.00",site:"sephora.com",art:"gloss",tint:3},
+  depop:{name:"Vintage Carhartt jacket",price:"54.00",site:"depop.com",art:"jacket",tint:5},
+  ebay:{name:"Contax T2 point & shoot",price:"210.00",site:"ebay.com",art:"cam",tint:4},
+  ulta:{name:"Ordinary niacinamide",price:"12.50",site:"ulta.com",art:"cream",tint:2}
+};
+function scrape(url){
+  const key = Object.keys(CATALOG).find(k=>url.toLowerCase().includes(k));
+  return key ? CATALOG[key] : null;
+}
+
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-go],[data-tab],[data-open],[data-b],[data-p],[data-status],[data-pledge],[data-alloc],[data-unalloc],#save,#deposit,#toward,#setpot,#seesave,#reset,[data-who]");
+  if(!t) return;
+  const d = t.dataset;
+
+  if(d.who){ view.who=d.who; view.screen="list"; view.item=null;
+    document.querySelectorAll("#who button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.who===d.who));
+    return render(); }
+  if(t.id==="reset"){ load(); view={who:view.who,screen:"list",tab:"need",item:null,draft:null}; return render(); }
+  if(d.go){ view.screen=d.go; if(d.go!=="add") view.draft=null; return render(); }
+  if(d.tab){ view.tab=d.tab; return render(); }
+  if(d.open){ view.item=d.open; view.screen="detail"; return render(); }
+
+  if(d.b || d.p){
+    view.draft = view.draft || {};
+    if(d.b) view.draft.bucket = d.b; else view.draft.pri = +d.p;
+    ["url","name","price"].forEach(k=>{ const el=document.getElementById(k); if(el) view.draft[k]=el.value; });
+    return render();
+  }
+
+  if(t.id==="save"){
+    const url = document.getElementById("url").value.trim();
+    const name = document.getElementById("name").value.trim();
+    const price = document.getElementById("price").value.trim();
+    const bucket = view.draft?.bucket || "want", pri = view.draft?.pri || 2;
+    if(url && !name){
+      const hit = scrape(url);
+      if(hit){ view.draft = {url, ...hit, bucket, pri}; return say("Filled it in from " + hit.site); }
+      view.draft = {url, bucket, pri, tried:true};
+      return render();
+    }
+    if(!name) return say("Give it a name first");
+    S.items.unshift({id:uid(), bucket, name, price:Math.round((parseFloat(price)||0)*100),
+      site:(view.draft?.site) || (url.replace(/^https?:\/\//,"").split("/")[0] || "typed in"),
+      art:view.draft?.art || null, tint:view.draft?.tint ?? 0, pri, status:"open"});
+    view.draft=null; view.screen="list"; view.tab=bucket;
+    return say("Added to " + {need:"Needs",want:"Wants",goal:"Goals"}[bucket]);
+  }
+
+  if(d.status){
+    const [id,st] = d.status.split("|"); find(id).status = st;
+    return say(st==="approved" ? "Approved" : "Marked not now");
+  }
+
+  if(d.alloc){
+    const it = find(d.alloc), b = balance();
+    if(b<=0) return say("Nothing in her savings to move yet");
+    const raw = prompt(`Move how much toward ${it.name}?\nShe has ${C(b)} unspent.`, (Math.min(b,2500)/100).toFixed(2));
+    if(raw===null) return;
+    const amt = Math.round((parseFloat(raw)||0)*100);
+    if(amt<=0) return;
+    if(amt>b) return say(`She only has ${C(b)} — that one's blocked.`);
+    S.ledger.push({id:uid(),item:it.id,source:"teen",kind:"allocate",amt,note:"",when:"today"});
+    return say(`${C(amt)} moved to ${it.name}`);
+  }
+  if(d.unalloc){
+    const it = find(d.unalloc), on = onItem(it.id,"teen");
+    const raw = prompt(`Take how much back off ${it.name}?\n${C(on)} of hers is on it.`, (on/100).toFixed(2));
+    if(raw===null) return;
+    const amt = Math.min(Math.round((parseFloat(raw)||0)*100), on);
+    if(amt<=0) return;
+    S.ledger.push({id:uid(),item:it.id,source:"teen",kind:"allocate",amt:-amt,note:"changed her mind",when:"today"});
+    return say(`${C(amt)} back in savings`);
+  }
+  if(d.pledge){
+    const it = find(d.pledge), left = S.pot - allocated();
+    const raw = prompt(`Pledge how much toward ${it.name}?\n${C(left)} of the pot is unpromised.`, "50.00");
+    if(raw===null) return;
+    const amt = Math.round((parseFloat(raw)||0)*100);
+    if(amt<=0) return;
+    S.ledger.push({id:uid(),item:it.id,source:"parent",kind:"pledged",amt,who:"Dad",done:false,when:"today"});
+    return say(amt>left ? "Pledged — but that puts the pot over" : `Pledged ${C(amt)}`);
+  }
+  if(t.id==="deposit"){
+    const raw = prompt("How much came in?", "20.00");
+    if(raw===null) return;
+    const amt = Math.round((parseFloat(raw)||0)*100); if(amt<=0) return;
+    const note = prompt("Where from?", "Babysitting") || "";
+    S.ledger.push({id:uid(),item:null,source:"teen",kind:"deposit",amt,note,when:"today"});
+    return say(`${C(amt)} in`);
+  }
+  if(t.id==="toward"){ view.screen="list"; view.tab="goal"; return say("Pick a goal, then ‘Put money toward this’"); }
+  if(t.id==="setpot"){
+    const raw = prompt("What should the pot be?", (S.pot/100).toFixed(2));
+    if(raw===null) return;
+    S.pot = Math.round((parseFloat(raw)||0)*100);
+    return say("Pot set to " + C(S.pot));
+  }
+  if(t.id==="seesave") return say(`She has ${C(balance())} unspent. You can see it, not move it.`);
+});
+
+render();
+</script>
