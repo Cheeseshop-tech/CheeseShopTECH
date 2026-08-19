@@ -538,12 +538,11 @@ document.addEventListener("click", e => {
     const list = items(it.bucket), i = list.findIndex(x=>x.id===id), j = i + (+dir);
     if(j<0 || j>=list.length) return;
     const other = list[j];
-    if(other.pri !== it.pri){
-      it.pri = other.pri;               // crossing a band means changing bands
-    } else {                            // same band: swap the manual order
-      const a = S.items.indexOf(it), b = S.items.indexOf(other);
-      [S.items[a], S.items[b]] = [S.items[b], S.items[a]];
-    }
+    // crossing a band adopts it AND takes the neighbour's place; adopting the band
+    // alone would leave the item sorting where it already was, so nothing would move
+    if(other.pri !== it.pri) it.pri = other.pri;
+    const a = S.items.indexOf(it), b = S.items.indexOf(other);
+    [S.items[a], S.items[b]] = [S.items[b], S.items[a]];
     return render();
   }
 
