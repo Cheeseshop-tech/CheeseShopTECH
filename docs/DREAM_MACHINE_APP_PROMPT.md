@@ -1,8 +1,10 @@
-# Teen Shopping Budget App — Build Prompt + Open Questions
+# Dream Machine — Build Prompt + Open Questions
+
+*Dream Machine — Banking and Budgeting. (Working title through rev. 2: "Teen Shopping Budget App.")*
 
 **Status:** PROMPT + DECISION SHEET. No app code written yet.
 **Prepared by:** Claude Code, at the request of Rick Posada
-**Date:** 2026-08-19 (rev. 3 — adds her savings balance; rev. 2 set access, budget, fallback UI)
+**Date:** 2026-08-19 (rev. 4 — named; rev. 3 added her savings balance; rev. 2 set access, budget, fallback UI)
 **Input doc:** "Teen Shopping Budget App — Spec" (chat-prepared, same date)
 
 Two things live here:
@@ -23,6 +25,7 @@ Two things live here:
 | Her savings | Tracked separately per Goal, alongside parent money. |
 | Parent actions | Approve/decline, set the pot, and pledge to specific Goals. |
 | Her savings | A general balance she banks money into, plus allocations out of it onto Goals. |
+| Name | **Dream Machine** — Banking and Budgeting. |
 
 Those last three interlock, so state the relationship plainly: **the pot is the ceiling, pledges
 are allocations out of it.** Parents enter one number (say $300). Pledging $80 toward the boots
@@ -44,7 +47,7 @@ source has a pot behind it.
 
 ## Context
 
-Build a mobile-first web app for a 15-year-old to catalog things she wants to buy, sorted into
+Build **Dream Machine** — banking and budgeting for a teenager — a mobile-first web app for a 15-year-old to catalog things she wants to buy, sorted into
 Needs / Wants / Goals, with a linked parent view where her parents can approve items, fund a
 shared savings pot, and pledge from it toward specific Goals. She tracks her own savings the same
 way: money she earns banks into a balance, and she puts it toward the bigger purchases she's
@@ -63,6 +66,9 @@ one-handed." The parent view is secondary and can be plainer.
   than adapting one.
 - **PWA:** web app manifest + `apple-touch-icon` so it installs to the iOS home screen and opens
   chromeless. No service worker / offline mode in v1 (see Non-goals).
+  Manifest `name`: "Dream Machine — Banking and Budgeting". Manifest `short_name`: **"Dream
+  Machine"** — that is what sits under the home screen icon, and iOS truncates past ~12
+  characters, so do not append anything to it. `<title>` matches the full name.
 - **Data:** Supabase Postgres. **Accessed only from Netlify Functions using the service key** —
   the browser never holds a Supabase key of any kind. See Access model for why.
 - **Scraping:** Firecrawl, called from a Netlify Function (`/api/scrape`), never from the browser.
@@ -301,6 +307,8 @@ link leaks. Seed script with realistic items so the UI can be reviewed before re
 - **Goals funded from a parent-entered pot, her savings tracked separately, parents can also
   approve/decline and pledge per Goal.** Reconciled by making pledges allocations *from* the pot
   rather than a parallel promise, so the two numbers can never disagree.
+- **Name: Dream Machine — Banking and Budgeting.** Set as the PWA name; "Dream Machine" alone is
+  the home screen label.
 - **She can bank savings generally and also put money straight onto a Goal.** Built as one ledger
   with a balance on her side mirroring the pot on the parents' side, so "how much do I have" and
   "how much is on the boots" are always the same money counted once.
@@ -340,7 +348,8 @@ app read the price *out of* the image?
 > good v1.1, bad Saturday.
 
 ### 4. Look and feel
-**a.** What should it be called? It shows under the home screen icon.
+*Named: **Dream Machine**, banking and budgeting. Icon label is "Dream Machine".*
+
 **b.** Style direction — a screenshot of an app she likes beats any adjective here.
 **c.** Is she reviewing this before it ships, or is it a surprise? Changes how much I guess at.
 **d.** Dark mode following the phone's setting?
