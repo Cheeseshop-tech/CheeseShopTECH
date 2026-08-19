@@ -321,12 +321,55 @@ increases what she has; only `allocate` decreases it.
 - Expect ~10–20% failure — Instagram Shops and some fast-fashion apps block scraping. That is the
   designed-for path, not the error path.
 
+## Getting items in from somewhere other than the paste field
+
+Pasting a link is the baseline, not the ceiling. Two upgrades, assessed:
+
+### The share sheet (proposed for v1 — high value, roughly an hour)
+
+The real friction isn't typing, it's leaving the store. On an iPhone the fix is an **iOS
+Shortcut published to the share sheet**, named "Add to Dream Machine": from Safari, the Depop
+app, Instagram, anywhere — Share → Dream Machine → the URL POSTs to `/api/scrape-and-add` with
+her token, and the item lands in a chosen bucket without the app ever coming to the foreground.
+A banner confirms it. She never loses her place.
+
+- No App Store, no review, no native code. The Shortcut is a file she installs once.
+- The token lives inside the Shortcut on her phone; the endpoint validates it exactly like any
+  other call, and rotation invalidates it along with everything else.
+- Default the bucket to Wants and let her re-file later — asking a question at share time defeats
+  the purpose.
+- On Android this is native: a PWA declares `share_target` in the manifest and appears in the
+  system share sheet with no Shortcut at all. Build the endpoint once; both front doors use it.
+
+### Importing a whole list (v1.1)
+
+**Shopping carts are not importable, and shouldn't be.** A cart sits behind her retail login.
+Reading one would mean holding her store credentials or session cookies — for a minor's accounts,
+against most sites' terms, and a standing security liability for a family app. Not worth it.
+
+**Public wishlist and share links are a different matter** and are worth doing. Where a retailer
+offers a shareable saved-items URL, that page is public and scrapes like any other, just with N
+products on it instead of one. The work is small and mostly UI:
+
+- `/api/scrape-list` returns an array of candidates rather than a single item.
+- She gets a picker — every item found, each with a checkbox, bucket, and price — and imports the
+  ones she actually wants. Never bulk-add silently; a 30-item dump is how a list becomes noise.
+- Worth checking which of the three sites she actually uses offer a public share URL before
+  committing to this. If none do, it's dead weight.
+
 ## Non-goals for v1 (state these back if asked to add them)
 
-Push notifications. Native apps / app store. Offline mode. Price-drop tracking. Accounts,
+Side-by-side browsing (see below). Push notifications. Native apps / app store. Offline mode.
+Price-drop tracking. Accounts,
 passwords, or email. Multiple households. Sharing outside the family. Analytics or third-party
 tracking of any kind — this is a minor's data; keep it to Supabase and nothing else. Payments.
 Chores/allowance tracking. Retailer affiliate links.
+
+**Side-by-side specifically:** iOS Safari on iPhone has no split view for two web pages, and no
+web app can create one — this is an OS limitation, not a build decision. iPad already does it
+natively via Split View with no work from us. The share-sheet route above solves the underlying
+problem better anyway: she doesn't need the app beside the store if the store can hand items to
+the app directly.
 
 ## Acceptance criteria for v1
 
