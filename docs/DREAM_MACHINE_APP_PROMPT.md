@@ -4,7 +4,8 @@
 
 **Status:** PROMPT + DECISION SHEET. No app code written yet.
 **Prepared by:** Claude Code, at the request of Rick Posada
-**Date:** 2026-08-19 (rev. 5 — visual direction; rev. 4 named; rev. 3 savings balance; rev. 2 access, budget, fallback UI)
+**Date:** 2026-08-19 (rev. 6 — capture routes; rev. 5 visual direction; rev. 4 named; rev. 3 savings
+balance; rev. 2 access, budget, fallback UI)
 **Input doc:** "Teen Shopping Budget App — Spec" (chat-prepared, same date)
 
 Two things live here:
@@ -15,20 +16,21 @@ Two things live here:
   top of Part B; the rest carry recommended defaults, so you can reply
   `defaults, except 5b` and the build starts.
 
-## Decisions locked in rev. 2
+## Decisions locked so far
 
 | Decision | Answer |
 |---|---|
 | Auto-filled vs. manually-entered items | Look identical. No badge, no failure styling. |
 | Access | One simple shared link per person. No accounts, no passwords. |
 | Goals funding | A single shared pot of parent money, entered by the parents. |
-| Her savings | Tracked separately per Goal, alongside parent money. |
+| Her savings | A balance she banks into, allocated out onto Goals and tracked separately from parent money. |
 | Parent actions | Approve/decline, set the pot, and pledge to specific Goals. |
-| Her savings | A general balance she banks money into, plus allocations out of it onto Goals. |
+| List view | Grid for browsing; list for reordering, reprioritizing, deleting. |
+| Getting items in | Share sheet via an iOS Shortcut. Carts can't be imported; public wishlists can. |
 | Name | **Dream Machine** — Banking and Budgeting. |
 | Visual direction | Depop-like: photo-led, high contrast, minimal chrome. |
 
-Those last three interlock, so state the relationship plainly: **the pot is the ceiling, pledges
+The three money rows interlock, so state the relationship plainly: **the pot is the ceiling, pledges
 are allocations out of it.** Parents enter one number (say $300). Pledging $80 toward the boots
 draws that $80 down, leaving $220 unallocated. Her own saved money is a separate track that never
 touches the pot. That is what keeps "budget" and "pledges" from becoming two systems that
