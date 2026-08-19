@@ -174,7 +174,7 @@ access_links
   household_id  uuid
   token_hash    text unique      -- sha256 of the token; the token itself is never stored
   role          text  -- 'teen' | 'parent'
-  display_name  text  -- 'Ella' | 'Mom' | 'Dad' — used for attribution
+  display_name  text  -- 'Bella' | 'Mom' | 'Dad' — used for attribution
   revoked_at    timestamptz
   last_seen_at  timestamptz      -- powers the parent's "new since you last looked"
 

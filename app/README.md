@@ -32,7 +32,7 @@ is compiled into the browser bundle, where a key is readable by anyone.
    ```
    SITE_URL=https://your-site.netlify.app \
    SUPABASE_URL=... SUPABASE_SERVICE_KEY=... \
-   npm run mint -- "Posada" Ella Mom Dad
+   npm run mint -- "Posada" Bella Mom Dad
    ```
 
    It prints one link per person. Send each person only their own — the link *is* the

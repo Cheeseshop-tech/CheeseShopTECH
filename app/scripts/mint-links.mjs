@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Creates a household and its three links. Run once, after the migration.
-//   SUPABASE_URL=... SUPABASE_SERVICE_KEY=... node scripts/mint-links.mjs "Posada" Ella Mom Dad
+//   SUPABASE_URL=... SUPABASE_SERVICE_KEY=... node scripts/mint-links.mjs "Posada" Bella Mom Dad
 import { createClient } from "@supabase/supabase-js";
 import { randomBytes, createHash } from "node:crypto";
 
