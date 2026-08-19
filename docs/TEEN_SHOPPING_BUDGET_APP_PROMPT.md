@@ -193,7 +193,7 @@ increases what she has; only `allocate` decreases it.
 - Within a section, sort by `priority` then `sort_order`; drag-to-reorder within a priority band.
 - Section header shows a running total of open items in that bucket. The Goals section is topped
   by a **savings card**: her balance, the parents' unallocated pot, and an "Add money" button.
-  Tapping the card opens Savings (screen 5). No fourth tab — a fourth bucket would cost layout on
+  Tapping the card opens Savings (screen 4). No fourth tab — a fourth bucket would cost layout on
   every screen for something that is one card.
 - Empty states matter — an empty Goals tab should say what a Goal is and offer "Add one."
 
@@ -218,7 +218,7 @@ increases what she has; only `allocate` decreases it.
   back off this," writing the negative `allocate`.
 - History strip: when it was added, and any parent actions taken, attributed by name.
 
-**5. Savings** (teen)
+**4. Savings** (teen)
 - Big number: current balance. Two actions: **Add money** (a deposit, with an optional note like
   "babysitting") and **Put toward a Goal** (pick a Goal, pick an amount, capped at the balance).
 - Below: the ledger, newest first — deposits, allocations, and money pulled back, each with its
@@ -226,7 +226,7 @@ increases what she has; only `allocate` decreases it.
   than a transaction list normally gets.
 - If the balance is 0 and there are no entries, say what this is for rather than showing "$0.00."
 
-**4. Parent View** (same app, parent token)
+**5. Parent View** (same app, parent token)
 - Header: **the pot** — total budget (tap to edit), amount allocated, amount unallocated. This is
   the primary parent-facing number.
 - Same three buckets, read-only, plus per item: **Approve**, **Decline**, and on Goals,
