@@ -4,7 +4,7 @@
 
 **Status:** PROMPT + DECISION SHEET. No app code written yet.
 **Prepared by:** Claude Code, at the request of Rick Posada
-**Date:** 2026-08-19 (rev. 4 — named; rev. 3 added her savings balance; rev. 2 set access, budget, fallback UI)
+**Date:** 2026-08-19 (rev. 5 — visual direction; rev. 4 named; rev. 3 savings balance; rev. 2 access, budget, fallback UI)
 **Input doc:** "Teen Shopping Budget App — Spec" (chat-prepared, same date)
 
 Two things live here:
@@ -26,6 +26,7 @@ Two things live here:
 | Parent actions | Approve/decline, set the pot, and pledge to specific Goals. |
 | Her savings | A general balance she banks money into, plus allocations out of it onto Goals. |
 | Name | **Dream Machine** — Banking and Budgeting. |
+| Visual direction | Depop-like: photo-led, high contrast, minimal chrome. |
 
 Those last three interlock, so state the relationship plainly: **the pot is the ceiling, pledges
 are allocations out of it.** Parents enter one number (say $300). Pledging $80 toward the boots
@@ -111,6 +112,52 @@ No login, no password, no email. Each person gets a long unguessable link they s
 - Rate-limit the token check (e.g. 20 failed attempts per IP per minute) so the token space can't
   be walked.
 
+## Visual direction — Depop as the reference
+
+She likes Depop, so build toward that feel. What that concretely means, and what it does not:
+
+- **Photos carry the screen; the UI recedes.** Big images, tight type, almost no borders, no card
+  shadows, no gradients, no decorative color fields. Depop looks the way it does because the
+  product photos are the design and everything else gets out of the way.
+- **Near-white paper, near-black ink, one accent.** Suggested: paper `#FAFAF8`, ink `#111111`,
+  accent `#6C4CF1`. **Do not make the accent red.** Depop's is, but this app spends red on
+  over-allocated budget, and an interface that is red everywhere can't warn with red.
+  Reserve red strictly for over-budget; reserve green strictly for a fully-funded Goal.
+- **Type:** a tight grotesk. Archivo 700/800 for headings and numbers, Inter for body and labels.
+  Small, wide-tracked uppercase for section labels; large and heavy for money figures.
+- **Controls:** pill-shaped buttons, full-bleed sheets that slide up, generous tap targets. No
+  hairline-bordered form fields — filled input wells instead.
+- **Dark mode** follows the phone setting: true near-black paper, not a dark gray, since the point
+  is again that photos glow and chrome disappears.
+- Take the *layout language*, not Depop's marks — no Depop logo, wordmark, or lifted iconography.
+  Dream Machine should look like a cousin, not a counterfeit.
+
+### The one conflict, and how it resolves
+
+The original spec asked for vertical card layouts. Depop's browse screen is a **two-up photo
+grid**. Both are honored by splitting on content type:
+
+- **Needs and Wants → two-column photo grid.** Square-ish tiles, image first, name and price small
+  underneath. Still one vertical scroll; no horizontal carousels, no timeline views. These items
+  are visual and she is scanning them the way she scans Depop.
+- **Goals → full-width cards, one per row.** A Goal carries a progress bar, two funding segments,
+  and dollar figures. That does not survive being shrunk to half-width, and Goals are the screen
+  she reads rather than scans.
+
+### What a photo grid demands of the images
+
+A grid is unforgiving about missing and mismatched images in a way a list is not — one blank tile
+in a 2-up grid reads as broken, and ~10–20% of adds will have no scraped image.
+
+- Serve every tile through a Cloudinary transform to a **uniform 4:5 crop** (`c_fill,g_auto`) so
+  ragged source images can't break the grid rhythm.
+- Store the image's dominant color on the item and paint it as the tile background while the photo
+  loads, so the grid never flashes empty.
+- **Design the no-image tile deliberately**, not as a fallback afterthought: the item name set
+  large in ink on a flat tinted field, with the source site small beneath. It should look like a
+  typographic choice. This is the single highest-leverage piece of polish in the app — it is what
+  keeps the scraping failures from feeling like failures.
+
 ## Data model
 
 ```
@@ -191,9 +238,10 @@ increases what she has; only `allocate` decreases it.
 **1. My List** (default screen, teen)
 - Three sections — Needs, Wants, Goals — as a segmented control at top; content is a single
   vertical scroll of cards. Vertical cards only; no horizontal carousels, no timeline/Gantt views.
-- Card: image thumbnail left, name + price + source site right, priority dot, status pill (only
-  when not `open`). Tap → Item Detail. Swipe → quick actions (change bucket, mark purchased,
-  delete).
+- **Needs and Wants render as a two-column photo grid** (see Visual direction): 4:5 image tile,
+  name and price small beneath, priority as a small dot on the tile, status pill only when not
+  `open`. Tap → Item Detail; long-press → quick actions (change bucket, mark purchased, delete).
+- **Goals render as full-width cards**, one per row, each showing its progress bar inline.
 - **Auto-filled and manually-entered items are visually identical.** No badge, no icon, no
   differing styling anywhere in the app. `entry_method` is recorded for diagnostics only.
 - Within a section, sort by `priority` then `sort_order`; drag-to-reorder within a priority band.
@@ -279,7 +327,9 @@ Chores/allowance tracking. Retailer affiliate links.
 8. Rotating links from a parent token invalidates all previous links immediately; the old link
    shows the "no longer valid" screen.
 9. A change on one device appears on the other within ~30s, or immediately on refocus.
-10. Tested at 390px wide (iPhone viewport) with no horizontal scroll anywhere.
+10. On a list where a third of items have no image, the grid still reads as designed — no blank
+    tiles, no layout gaps, no broken-image icons.
+11. Tested at 390px wide (iPhone viewport) with no horizontal scroll anywhere.
 
 ## Deliverables
 
@@ -309,6 +359,9 @@ link leaks. Seed script with realistic items so the UI can be reviewed before re
   rather than a parallel promise, so the two numbers can never disagree.
 - **Name: Dream Machine — Banking and Budgeting.** Set as the PWA name; "Dream Machine" alone is
   the home screen label.
+- **Visual direction: Depop.** Photo-led, high contrast, minimal chrome. Needs and Wants become a
+  two-column photo grid; Goals stay full-width because progress bars and dollar figures don't
+  survive half-width. Accent deliberately not red, since red is doing budget-warning work.
 - **She can bank savings generally and also put money straight onto a Goal.** Built as one ledger
   with a balance on her side mirroring the pot on the parents' side, so "how much do I have" and
   "how much is on the boots" are always the same money counted once.
@@ -348,12 +401,12 @@ app read the price *out of* the image?
 > good v1.1, bad Saturday.
 
 ### 4. Look and feel
-*Named: **Dream Machine**, banking and budgeting. Icon label is "Dream Machine".*
+*Named: **Dream Machine**, banking and budgeting. Icon label is "Dream Machine". Visual direction:
+Depop — see the Visual direction section in Part A. Dark mode: yes, following the phone.*
 
-**b.** Style direction — a screenshot of an app she likes beats any adjective here.
-**c.** Is she reviewing this before it ships, or is it a surprise? Changes how much I guess at.
-**d.** Dark mode following the phone's setting?
-> **Recommended:** yes. Cheap if done from the start, annoying to retrofit.
+**c.** Still open, and it is the last real unknown: **is she reviewing this before it ships, or is
+it a surprise?** If she is reviewing, the accent color and the no-image tile are worth showing her
+before I build the rest. If it is a surprise, I will pick and she can redecorate later.
 
 ### 5. Privacy
 **a.** Confirm: no analytics, no third-party scripts, no error-reporting service that receives item
