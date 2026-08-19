@@ -1,0 +1,29 @@
+{
+  "name": "dream-machine",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "netlify dev",
+    "dev:web": "vite",
+    "build": "tsc -b && vite build",
+    "check": "tsc -b --noEmit false && tsc -p tsconfig.functions.json",
+    "mint": "node scripts/mint-links.mjs",
+    "test": "node --experimental-strip-types tests/scrape.test.mjs && node --experimental-strip-types tests/rules.test.mjs",
+    "test:ui": "vite preview --port 4173 & sleep 3 && node tests/ui.test.mjs; kill %1"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@netlify/functions": "^2.8.1",
+    "@types/node": "^26.2.0",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.2"
+  }
+}
