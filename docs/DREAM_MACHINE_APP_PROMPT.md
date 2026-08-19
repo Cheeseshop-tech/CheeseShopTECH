@@ -225,6 +225,13 @@ increases what she has; only `allocate` decreases it.
   pot is a promise and can be optimistic; her balance is money that either exists or doesn't.
 - Pulling money back off a Goal is a negative `allocate` — she will change her mind about which
   thing she's saving for, and the app should let her without deleting history.
+- **Deleting an item with money on it must settle that money, not orphan it.** Her `allocate`
+  entries are removed, which returns the amount to her balance by the formula above; her `direct`
+  entries become `deposit` entries (item_id NULL), because that money never passed through the
+  balance and would otherwise vanish; parent `pledged` entries are removed, freeing the pot. The
+  confirmation says exactly what will happen — "$40 goes back to her balance and $60 of pledges is
+  freed up" — before anything is deleted. Silently deleting money is the one bug in this app that
+  would actually matter.
 - **Pot remaining** = `goal_budget_cents − sum(pledged on non-archived goals)`. This is the number
   parents care about; show it at the top of the parent Goals view.
 - If a pledge would push the pot negative, **warn but allow** — show the pot as over-allocated in
@@ -244,7 +251,19 @@ increases what she has; only `allocate` decreases it.
 - **Goals render as full-width cards**, one per row, each showing its progress bar inline.
 - **Auto-filled and manually-entered items are visually identical.** No badge, no icon, no
   differing styling anywhere in the app. `entry_method` is recorded for diagnostics only.
-- Within a section, sort by `priority` then `sort_order`; drag-to-reorder within a priority band.
+- Within a section, sort by `priority` then `sort_order`.
+- **A grid/list toggle sits at the right of the tab row and applies to all three buckets.** The
+  grid is for browsing; the list is for tidying up, and carries the controls a photo tile has no
+  room for:
+  - A compact row: small thumbnail, name, price and source, and a tappable priority label
+    (Must have → Would like → Someday, cycling).
+  - **Up/down arrows rather than drag.** Touch drag-and-drop inside a scrolling list is fiddly on
+    a phone and hard to undo; arrows are unambiguous and reversible. Moving an item **within** a
+    priority band reorders it; moving it **past** the band boundary promotes or demotes it into
+    the neighboring band. One control does both jobs, and the list visibly re-sorts either way.
+  - Delete, with a confirmation that states any money consequence (see below).
+- Remember the toggle per person — she will have a preference and it won't be the same in both
+  directions.
 - Section header shows a running total of open items in that bucket. The Goals section is topped
   by a **savings card**: her balance, the parents' unallocated pot, and an "Add money" button.
   Tapping the card opens Savings (screen 4). No fourth tab — a fourth bucket would cost layout on
@@ -327,9 +346,12 @@ Chores/allowance tracking. Retailer affiliate links.
 8. Rotating links from a parent token invalidates all previous links immediately; the old link
    shows the "no longer valid" screen.
 9. A change on one device appears on the other within ~30s, or immediately on refocus.
-10. On a list where a third of items have no image, the grid still reads as designed — no blank
+10. In list view, an item moved up past a priority boundary changes priority and the list
+    re-sorts; deleting a Goal with $40 of her savings and $60 pledged on it warns about both,
+    and on confirm her balance rises by $40 and the pot frees $60.
+11. On a list where a third of items have no image, the grid still reads as designed — no blank
     tiles, no layout gaps, no broken-image icons.
-11. Tested at 390px wide (iPhone viewport) with no horizontal scroll anywhere.
+12. Tested at 390px wide (iPhone viewport) with no horizontal scroll anywhere.
 
 ## Deliverables
 
@@ -453,3 +475,8 @@ and "scraping" is a lookup table with four known sites. Everything else is the r
   its own tile in the smaller slots.
 - **A tile that carries its own name doesn't repeat it underneath.** The no-image treatment sets
   the name large inside the tile, so the caption below it drops to price and source only.
+- **The no-image treatment becomes a monogram at thumbnail size.** Sized in container units, the
+  full name renders around 5px wide in a 42px list thumbnail — unreadable. Below roughly 80px the
+  tile shows a single large initial instead, which looks deliberate rather than broken.
+- **Deleting an item has to settle its money** (see the ledger rules above). This only became
+  obvious once the list view made deletion a one-tap action.

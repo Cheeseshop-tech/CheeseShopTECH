@@ -64,6 +64,29 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--her);outline-offset
   padding-bottom:10px;margin-bottom:-15px;border-bottom:2px solid transparent}
 .tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
 .tabs .count{font-size:11px;font-weight:600;color:var(--ink-30);margin-left:4px}
+.tabs .viewtog{margin-left:auto;display:flex;gap:2px;background:var(--well);border-radius:999px;
+  padding:3px;align-self:flex-start}
+.tabs .viewtog button{font-family:"Public Sans",sans-serif;font-size:11px;font-weight:600;
+  color:var(--ink-60);padding:5px 10px;border-radius:999px;border:0;margin:0}
+.tabs .viewtog button[aria-pressed="true"]{background:var(--card);color:var(--ink)}
+
+/* list view */
+.row{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.row .rthumb{width:42px;height:52px;border-radius:6px;overflow:hidden;flex:none;
+  background:var(--well);container-type:inline-size}
+.row .rtext{flex:1;min-width:0;text-align:left;display:flex;flex-direction:column;align-items:flex-start}
+.row .rname{font-size:14px;font-weight:500;line-height:1.25;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.row .rmeta{font-size:11px;color:var(--ink-30);margin-top:2px}
+.prichip{margin-top:6px;align-self:flex-start;font-size:10px;font-weight:600;letter-spacing:.03em;padding:4px 9px;
+  border-radius:999px;background:var(--well);color:var(--ink-60);display:inline-flex;align-items:center;gap:6px}
+.arrows{display:flex;flex-direction:column;gap:3px;flex:none}
+.arrows button{width:30px;height:25px;border-radius:7px;background:var(--well);font-size:11px;
+  color:var(--ink-60);display:flex;align-items:center;justify-content:center}
+.arrows button[disabled]{opacity:.25;cursor:default}
+.del{width:32px;height:32px;border-radius:50%;background:var(--well);color:var(--over);
+  font-size:15px;display:flex;align-items:center;justify-content:center;flex:none}
+.hint{font-size:11px;color:var(--ink-30);line-height:1.5;margin:2px 0 12px}
 
 /* grid */
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px}
@@ -75,6 +98,8 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--her);outline-offset
 .noimg .n{font-size:13cqw;font-weight:800;line-height:1.05;letter-spacing:-.02em;
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .noimg .s{font-size:5cqw;font-weight:600;letter-spacing:.1em;text-transform:uppercase;opacity:.55;order:-1}
+.noimg.mini{justify-content:center;align-items:center;padding:0}
+.noimg.mini .n{font-size:46cqw;line-height:1;-webkit-line-clamp:1}
 .pri{position:absolute;top:8px;left:8px;width:8px;height:8px;border-radius:50%;
   box-shadow:0 0 0 2px rgba(255,255,255,.9)}
 .pill{position:absolute;top:8px;right:8px;font-size:9px;font-weight:600;letter-spacing:.08em;
@@ -215,7 +240,7 @@ const SEED = () => ({
   ]
 });
 
-let S, view = {who:"teen", screen:"list", tab:"need", item:null, toast:null, draft:null};
+let S, view = {who:"teen", screen:"list", tab:"need", mode:"grid", item:null, toast:null, draft:null};
 const load = () => { S = SEED(); };
 load();
 
@@ -224,13 +249,15 @@ const balance = () => S.ledger.filter(l=>l.source==="teen").reduce((n,l)=>
 const allocated = () => S.ledger.filter(l=>l.kind==="pledged").reduce((n,l)=>n+l.amt,0);
 const onItem = (id,src) => S.ledger.filter(l=>l.item===id &&
   (src==="teen" ? l.source==="teen" : l.kind==="pledged")).reduce((n,l)=>n+l.amt,0);
-const items = b => S.items.filter(i=>i.bucket===b && i.status!=="purchased");
+const items = b => S.items.filter(i=>i.bucket===b && i.status!=="purchased")
+  .sort((x,y)=>x.pri-y.pri);   // stable: manual order holds inside a band
 const find = id => S.items.find(i=>i.id===id);
 
-function shot(it){
+function shot(it, mini){
   const [bg,fg] = TINT[it.tint % TINT.length];
-  return it.art ? ART[it.art](bg,fg)
-    : `<div class="noimg" style="background:${bg};color:${fg}"><span class="n">${it.name}</span><span class="s">${it.site.split(".")[0]}</span></div>`;
+  if(it.art) return ART[it.art](bg,fg);
+  if(mini) return `<div class="noimg mini" style="background:${bg};color:${fg}"><span class="n">${it.name.trim()[0].toUpperCase()}</span></div>`;
+  return `<div class="noimg" style="background:${bg};color:${fg}"><span class="n">${it.name}</span><span class="s">${it.site.split(".")[0]}</span></div>`;
 }
 const priColor = p => p===1 ? "var(--over)" : p===2 ? "var(--them)" : "var(--ink-30)";
 const statusPill = (s,cls="pill") => s==="approved" ? `<span class="${cls} ok">Approved</span>`
@@ -245,13 +272,30 @@ function tile(it){
   </button>`;
 }
 
+const PRI = {1:"Must have",2:"Would like",3:"Someday"};
+function listRow(it, i, n){
+  return `<div class="row">
+    <span class="rthumb">${shot(it,true)}</span>
+    <button class="rtext" data-open="${it.id}">
+      <span class="rname">${it.name}</span>
+      <span class="rmeta num">${C(it.price)} · ${it.site}</span>
+      <span class="prichip" data-pri="${it.id}"><i class="dot" style="border-radius:50%;background:${priColor(it.pri)}"></i>${PRI[it.pri]}</span>
+    </button>
+    <span class="arrows">
+      <button data-move="${it.id}|-1" ${i===0?"disabled":""} aria-label="Move up">▲</button>
+      <button data-move="${it.id}|1" ${i===n-1?"disabled":""} aria-label="Move down">▼</button>
+    </span>
+    <button class="del" data-del="${it.id}" aria-label="Delete ${it.name}">✕</button>
+  </div>`;
+}
+
 function goalCard(it){
   const her = onItem(it.id,"teen"), them = onItem(it.id,"parent");
   const pct = n => Math.min(100, n/it.price*100);
   const left = Math.max(0, it.price - her - them);
   return `<button class="goal" data-open="${it.id}">
     <span class="row">
-      <span class="thumb">${shot(it)}</span>
+      <span class="thumb">${shot(it,true)}</span>
       <span style="flex:1">
         <h3>${it.name}</h3>
         <span class="of num">${C(her+them)} of ${C(it.price)}${left? " · " + C(left) + " to go" : " · fully funded"}</span>
@@ -273,20 +317,30 @@ function listScreen(){
   const head = `<div class="topbar"><h1 class="brand">Dream<em>Machine</em></h1></div>`;
   const tabs = ["need","want","goal"].map(b=>
     `<button data-tab="${b}" aria-selected="${b===t}">${{need:"Needs",want:"Wants",goal:"Goals"}[b]}
-      <span class="count num">${items(b).length}</span></button>`).join("");
-  let body;
-  if(!list.length){
-    body = `<div class="empty"><h3>${t==="goal"?"Nothing saved for yet":"Nothing here yet"}</h3>
-      ${t==="goal"?"A goal is something big enough to save toward — a camera, a bag, a coat you keep going back to.":"Paste a link and it lands here."}
-      <div style="margin-top:18px"><button class="btn sm" data-go="add" style="display:inline-block;padding:11px 22px;width:auto">Add something</button></div></div>`;
-  } else if(t==="goal"){
-    body = `<div class="money">
+      <span class="count num">${items(b).length}</span></button>`).join("")
+    + `<span class="viewtog">
+        <button data-mode="grid" aria-pressed="${view.mode!=="list"}">Grid</button>
+        <button data-mode="list" aria-pressed="${view.mode==="list"}">List</button>
+      </span>`;
+  const money = `<div class="money">
         <div class="two">
           <div class="half"><div class="cap">Her savings</div><div class="fig her num">${C(balance())}</div></div>
           <div class="half"><div class="cap">Parents left</div><div class="fig them num"${S.pot-allocated()<0?' style="color:var(--over)"':''}>${C(S.pot-allocated())}</div></div>
         </div>
         <button class="btn sm dark" data-go="savings" style="margin-top:11px">Open savings</button>
-      </div>` + list.map(goalCard).join("");
+      </div>`;
+  let body;
+  if(!list.length){
+    body = `<div class="empty"><h3>${t==="goal"?"Nothing saved for yet":"Nothing here yet"}</h3>
+      ${t==="goal"?"A goal is something big enough to save toward — a camera, a bag, a coat you keep going back to.":"Paste a link and it lands here."}
+      <div style="margin-top:18px"><button class="btn sm" data-go="add" style="display:inline-block;padding:11px 22px;width:auto">Add something</button></div></div>`;
+  } else if(view.mode==="list"){
+    body = (t==="goal"? money : "")
+      + `<p class="hint">Arrows move things up and down. Tap the label to change how badly she wants it.</p>`
+      + list.map((it,i)=>listRow(it,i,list.length)).join("")
+      + `<p class="note">${list.length} open · ${C(total)} all in</p>`;
+  } else if(t==="goal"){
+    body = money + list.map(goalCard).join("");
   } else {
     body = `<div class="grid">${list.map(tile).join("")}</div>
       <p class="note">${list.length} open · ${C(total)} all in</p>`;
@@ -411,7 +465,7 @@ function parentScreen(){
     <div style="margin-top:10px">${S.items.filter(i=>i.status==="open").map(it=>`
       <div class="goal" style="cursor:default">
         <div class="row">
-          <span class="thumb">${shot(it)}</span>
+          <span class="thumb">${shot(it,true)}</span>
           <span style="flex:1"><h3 style="font-size:15px">${it.name}</h3>
             <span class="of num">${C(it.price)} · ${{need:"Need",want:"Want",goal:"Goal"}[it.bucket]} · ${it.site}</span></span>
         </div>
@@ -462,7 +516,7 @@ function scrape(url){
 }
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-go],[data-tab],[data-open],[data-b],[data-p],[data-status],[data-pledge],[data-alloc],[data-unalloc],#save,#deposit,#toward,#setpot,#seesave,#reset,[data-who]");
+  const t = e.target.closest("[data-go],[data-tab],[data-mode],[data-open],[data-b],[data-p],[data-pri],[data-move],[data-del],[data-status],[data-pledge],[data-alloc],[data-unalloc],#save,#deposit,#toward,#setpot,#seesave,#reset,[data-who]");
   if(!t) return;
   const d = t.dataset;
 
@@ -472,6 +526,41 @@ document.addEventListener("click", e => {
   if(t.id==="reset"){ load(); view={who:view.who,screen:"list",tab:"need",item:null,draft:null}; return render(); }
   if(d.go){ view.screen=d.go; if(d.go!=="add") view.draft=null; return render(); }
   if(d.tab){ view.tab=d.tab; return render(); }
+  if(d.mode){ view.mode=d.mode; return render(); }
+
+  if(d.pri){
+    const it = find(d.pri); it.pri = it.pri===3 ? 1 : it.pri+1;
+    return say(it.name + " · " + PRI[it.pri]);
+  }
+
+  if(d.move){
+    const [id,dir] = d.move.split("|"); const it = find(id);
+    const list = items(it.bucket), i = list.findIndex(x=>x.id===id), j = i + (+dir);
+    if(j<0 || j>=list.length) return;
+    const other = list[j];
+    if(other.pri !== it.pri){
+      it.pri = other.pri;               // crossing a band means changing bands
+    } else {                            // same band: swap the manual order
+      const a = S.items.indexOf(it), b = S.items.indexOf(other);
+      [S.items[a], S.items[b]] = [S.items[b], S.items[a]];
+    }
+    return render();
+  }
+
+  if(d.del){
+    const it = find(d.del);
+    const hers = onItem(it.id,"teen"), theirs = onItem(it.id,"parent");
+    const money = hers||theirs
+      ? `\n\n${C(hers)} of her savings goes back to her balance` + (theirs?` and ${C(theirs)} of pledges is freed up.`:".")
+      : "";
+    if(!confirm(`Delete "${it.name}"?${money}`)) return;
+    // her direct-to-goal money never passed through the balance, so it returns as a deposit
+    S.ledger = S.ledger.flatMap(l => l.item!==it.id ? [l]
+      : l.kind==="direct" ? [{...l, item:null, kind:"deposit", note:"back from " + it.name}] : []);
+    S.items = S.items.filter(x=>x.id!==it.id);
+    if(view.screen==="detail"){ view.screen="list"; view.item=null; }
+    return say("Deleted" + (hers?` · ${C(hers)} back in savings`:""));
+  }
   if(d.open){ view.item=d.open; view.screen="detail"; return render(); }
 
   if(d.b || d.p){
