@@ -44,8 +44,8 @@ Any browser's **Print → Save as PDF** at 100% scale with headers/footers off a
 
 ## OPEN FIELDS — still needed before this goes to ACE
 
-The spec grid and item bar carry visible placeholders (`—`) plus an on-sheet amber
-"Pending for item setup" note. Remove that note once the fields below are confirmed.
+The on-sheet pending note has been removed. UPC is the one remaining visible placeholder
+(`—`) in the spec grid.
 
 1. **MT item number — 02091 (needs confirmation).** Identified from the media hub: Cloudinary
    `monti-trentini/asiago/asiago-pressato-dop-200g-atm-pf-02091` and Drive
@@ -73,28 +73,22 @@ omitted** — it is item-setup data for the buyer's system, not a reason a retai
 item. Its grid cell carries **Origin** instead. Case cube, Ti-Hi and landed cost are off the
 sheet for the same reason. All of it still has to be supplied to ACE separately at setup.
 
-## Consorzio Asiago mark — not yet placed
+## Consorzio Asiago mark — removed, not placed
 
-The sheet reserves a correctly-sized slot (dashed box, 54 × 26 pt) next to the DOP credential
-line for the official **Consorzio Tutela Formaggio Asiago** mark. It is empty on purpose.
+The credential strip (empty logo slot + "Consorzio Tutela Formaggio Asiago · Autorizzazione
+N. 41/95") was taken off the sheet at Rick's direction, since the slot was still empty and
+read as unfinished. The DOP seal remains in the hero block and "DOP" carries through the
+product name and copy.
 
-The official artwork exists in the media hub at Cloudinary
+The official mark lives in the media hub at Cloudinary
 `monti-trentini/marks/consorzio-asiago.png` (401 × 308, tagged `official-artwork`), but
-`res.cloudinary.com` is **blocked by this workspace's egress policy**, so this session could
-not download it. Attempting to rebuild the mark from the pack photograph produced distorted
-letterforms — unacceptable for a certification mark — so nothing was placed rather than
-placing something wrong.
+`res.cloudinary.com` is blocked by this workspace's egress policy, so it could not be
+downloaded here. Rebuilding it from the pack photograph produced distorted letterforms,
+which is not acceptable for a certification mark.
 
-To finish it: drop `consorzio-asiago.png` into `img/` and replace the slot markup with
-
-```html
-<img class="cred-mark" src="img/consorzio-asiago.png" alt="Consorzio Tutela Formaggio Asiago">
-```
-
-styled `height:26pt; width:auto;`. Everything around it is already positioned.
-
-Note that this is a third-party certification mark: use it only in the official artwork,
-undistorted, under Monti Trentini's authorization N. 41/95.
+To add it later: drop the PNG into `img/` and restore a credential strip beside it. It is a
+third-party certification mark — official artwork only, undistorted, under Monti Trentini's
+authorization N. 41/95.
 
 ## AI compliance
 
