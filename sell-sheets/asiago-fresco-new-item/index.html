@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Asiago Fresco New Item</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+  :root{
+    --mt-green:#00953F;
+    --mt-green-dark:#054E21;
+    --rule:#109C4B;
+    --ink:#333333;
+    --label:#5E5E5E;
+    --sub:#545454;
+    --line:#E6E6E6;
+    --tint:#F4F9F6;
+    --margin:0.48in;
+  }
+  @page{ size:8.5in 11in; margin:0; }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ background:#fff; }
+  body{
+    width:8.5in; height:11in; position:relative;
+    font-family:"Montserrat",Arial,Helvetica,sans-serif;
+    color:var(--ink); -webkit-font-smoothing:antialiased;
+    print-color-adjust:exact; -webkit-print-color-adjust:exact;
+  }
+
+  /* ---------- page furniture ---------- */
+  .bar-top{ position:absolute; top:0; left:0; right:0; height:10.5pt; background:var(--mt-green); }
+  .footer{
+    position:absolute; left:0; right:0; bottom:0; height:0.74in;
+    background:var(--mt-green); color:#fff;
+    padding:12pt var(--margin) 0;
+    display:flex; justify-content:space-between; align-items:flex-start;
+  }
+  .footer .co{ font-size:8pt; font-weight:700; letter-spacing:.06em; }
+  .footer .line{ font-size:7.5pt; font-weight:400; margin-top:2.5pt; }
+  .footer .fine{ font-size:6.2pt; font-weight:400; color:#D7EEE1; margin-top:3pt; max-width:4.7in; line-height:1.3; }
+  .footer .it{
+    font-family:"Playfair Display",Georgia,serif; font-style:italic;
+    font-size:9pt; align-self:flex-end; padding-bottom:9pt; white-space:nowrap;
+  }
+
+  .page{ position:absolute; top:10.5pt; left:var(--margin); right:var(--margin); }
+
+  /* ---------- header ---------- */
+  .head{ display:flex; justify-content:space-between; align-items:flex-start; padding-top:19pt; }
+  .logo{ width:2.05in; }
+  .head-right{ text-align:right; }
+  .eyebrow{ font-size:7.5pt; font-weight:600; letter-spacing:.13em; color:#666; }
+  .eyebrow-2{ font-size:10pt; font-weight:700; letter-spacing:.06em; color:var(--mt-green); margin-top:4pt; }
+  .ace-box{
+    margin-top:8pt; border:1px solid var(--line); border-radius:2pt;
+    padding:6pt 9pt; display:flex; align-items:center; gap:9pt;
+  }
+  .ace-box span{ font-size:6.6pt; font-weight:600; letter-spacing:.11em; color:#666; }
+  .ace-box img{ height:19pt; }
+
+  /* ---------- title ---------- */
+  .title{
+    font-family:"Playfair Display",Georgia,serif; font-style:italic; font-weight:700;
+    font-size:38pt; color:var(--mt-green); line-height:1.02; margin-top:13pt;
+  }
+  .kicker{ font-size:7.5pt; font-weight:600; letter-spacing:.14em; color:var(--ink); margin-top:7pt; }
+  .rule{ height:1.2pt; background:var(--rule); margin-top:7pt; }
+
+  /* ---------- hero product ---------- */
+  .hero{ display:flex; gap:14pt; margin-top:16pt; }
+  .tile{
+    flex:0 0 1.95in; height:3.02in; border:1px solid var(--line); border-radius:3pt;
+    display:flex; align-items:center; justify-content:center; padding:5pt; background:#fff;
+  }
+  .tile img{ max-width:100%; max-height:100%; }
+  .hero-body{ flex:1 1 auto; min-width:0; }
+  .hero-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:10pt; }
+  .prod-name{
+    font-family:"Playfair Display",Georgia,serif; font-style:italic; font-weight:700;
+    font-size:21pt; color:var(--mt-green); line-height:1.1;
+  }
+  .prod-sub{ font-size:7.5pt; font-weight:600; letter-spacing:.09em; color:var(--sub); margin-top:5pt; }
+  .seal{ width:26pt; flex:0 0 auto; }
+  .blurb{
+    font-family:"Playfair Display",Georgia,serif; font-style:italic; font-weight:400;
+    font-size:11pt; line-height:1.45; color:var(--ink); margin-top:8pt;
+  }
+
+  /* ---------- spec grid ---------- */
+  .grid{
+    margin-top:9pt; border:1px solid var(--line); border-radius:2pt; overflow:hidden;
+    display:grid; grid-template-columns:repeat(4,1fr);
+  }
+  .cell{ padding:5pt 8pt 6pt; border-left:1px solid var(--line); border-top:1px solid var(--line); }
+  .cell:nth-child(4n+1){ border-left:0; }
+  .cell:nth-child(-n+4){ border-top:0; }
+  .cell .l{ font-size:6.3pt; font-weight:600; letter-spacing:.1em; color:var(--label); }
+  .cell .v{ font-size:9pt; font-weight:600; color:var(--mt-green-dark); margin-top:2.5pt; }
+  .tbd{ color:#9AA5A0; font-weight:600; letter-spacing:.04em; }
+
+  /* ---------- item bar ---------- */
+  .itembar{
+    margin-top:8pt; background:var(--mt-green-dark); color:#fff; border-radius:3pt;
+    height:16.4pt; display:flex; align-items:center; justify-content:center; gap:14pt;
+    font-size:8.7pt; font-weight:700; letter-spacing:.04em;
+  }
+  .itembar .dot{ font-weight:400; opacity:.75; }
+  .itembar .new{
+    background:#fff; color:var(--mt-green-dark); border-radius:1.5pt;
+    font-size:6.4pt; letter-spacing:.11em; padding:1.6pt 4.5pt;
+  }
+  .pending{
+    margin-top:5pt; border:1px solid #E8D9A8; background:#FCF7E8; border-radius:2pt;
+    padding:4.5pt 8pt; font-size:6.6pt; font-weight:500; color:#6B5A25; line-height:1.45;
+  }
+  .pending b{ font-weight:700; letter-spacing:.09em; }
+
+  /* ---------- lower panels ---------- */
+  .panels{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:14pt; margin-top:24pt; }
+  .panel-h{
+    font-size:7pt; font-weight:700; letter-spacing:.13em; color:var(--mt-green-dark);
+    padding-bottom:4pt; border-bottom:1.2pt solid var(--rule);
+  }
+  .panel ul{ list-style:none; margin-top:7pt; }
+  .panel li{ font-size:8pt; font-weight:400; line-height:1.45; color:var(--ink); padding-left:9pt; position:relative; margin-bottom:5pt; }
+  .panel li::before{ content:"·"; position:absolute; left:2pt; color:var(--mt-green); font-weight:700; }
+  .panel li b{ font-weight:600; color:var(--mt-green-dark); }
+
+  /* ---------- companion strip ---------- */
+  .companion{
+    margin-top:22pt; border:1px solid var(--line); border-radius:3pt; background:var(--tint);
+    padding:8pt 11pt; display:flex; align-items:center; justify-content:space-between; gap:12pt;
+  }
+  .companion .c-l{ font-size:6.5pt; font-weight:600; letter-spacing:.12em; color:var(--label); }
+  .companion .c-t{
+    font-family:"Playfair Display",Georgia,serif; font-style:italic; font-weight:700;
+    font-size:11pt; color:var(--mt-green); margin-top:2pt;
+  }
+  .companion .c-d{ font-size:7.4pt; font-weight:400; color:var(--ink); margin-top:2.5pt; }
+  .companion .c-r{ text-align:right; flex:0 0 auto; }
+  .companion .c-r .n{ font-size:7.6pt; font-weight:700; letter-spacing:.05em; color:var(--mt-green-dark); }
+  .companion .c-r .s{ font-size:6.5pt; font-weight:500; color:var(--label); margin-top:2pt; }
+</style>
+</head>
+<body>
+
+  <div class="bar-top"></div>
+
+  <div class="page">
+
+    <!-- HEADER -->
+    <div class="head">
+      <img class="logo" src="img/mt-logo.png" alt="Monti Trentini — Formaggi &amp; Tradizione">
+      <div class="head-right">
+        <div class="eyebrow">NEW ITEM INTRODUCTION</div>
+        <div class="eyebrow-2">SEPTEMBER 2026</div>
+        <div class="ace-box">
+          <span>AVAILABLE THROUGH</span>
+          <img src="img/ace-logo.png" alt="ACE Endico">
+        </div>
+      </div>
+    </div>
+
+    <!-- TITLE -->
+    <div class="title">New for the Retail Case</div>
+    <div class="kicker">CASARI DAL 1925 · GRIGNO VALSUGANA (TN) · ASIAGO FRESCO DOP, EXACT-WEIGHT WEDGE</div>
+    <div class="rule"></div>
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="tile">
+        <img src="img/asiago-fresco-pack.jpg" alt="Monti Trentini Asiago DOP Fresco retail wedge in printed film">
+      </div>
+
+      <div class="hero-body">
+        <div class="hero-head">
+          <div>
+            <div class="prod-name">Asiago Fresco DOP</div>
+            <div class="prod-sub">NEW ITEM · EXACT-WEIGHT WEDGE · PRINTED VACUUM FILM</div>
+          </div>
+          <img class="seal" src="img/dop-seal.png" alt="Protected Designation of Origin">
+        </div>
+
+        <div class="blurb">
+          The deli-case Asiago the plateau is named for, now cut and wrapped for the retail
+          shelf. Young cooked-curd cheese from whole cow's milk — mild, buttery and elastic,
+          with small irregular eyes and a clean milk finish. Grab-and-go format, full DOP
+          credentials on the face of the pack.
+        </div>
+
+        <div class="grid">
+          <div class="cell"><div class="l">CASE PACK</div><div class="v tbd">— pc/case</div></div>
+          <div class="cell"><div class="l">NET WEIGHT</div><div class="v tbd">— oz / g</div></div>
+          <div class="cell"><div class="l">MILK</div><div class="v">Cow, whole</div></div>
+          <div class="cell"><div class="l">AGE</div><div class="v">20–40 days</div></div>
+          <div class="cell"><div class="l">PACK FORMAT</div><div class="v">Wedge, film</div></div>
+          <div class="cell"><div class="l">SHELF LIFE</div><div class="v tbd">— days</div></div>
+          <div class="cell"><div class="l">STORAGE</div><div class="v">34–40 °F</div></div>
+          <div class="cell"><div class="l">UPC</div><div class="v tbd">—</div></div>
+        </div>
+
+        <div class="itembar">
+          <span>MT ITEM —</span>
+          <span class="dot">·</span>
+          <span>ACE ITEM —</span>
+          <span class="new">NEW</span>
+        </div>
+
+        <div class="pending">
+          <b>PENDING FOR ITEM SETUP:</b> MT item number, ACE item number, case pack, net weight,
+          UPC/GTIN, shelf life, case cube &amp; Ti-Hi, landed cost. Confirm with Caseria Monti Trentini
+          and verify all DOP, age and nutrition copy against the current spec sheet before distribution.
+        </div>
+      </div>
+    </div>
+
+    <!-- PANELS -->
+    <div class="panels">
+      <div class="panel">
+        <div class="panel-h">WHY IT SELLS</div>
+        <ul>
+          <li><b>Name recognition.</b> Asiago is already on the shopper's list — this is the authentic DOP version of it.</li>
+          <li><b>Entry-point flavor.</b> Mild and buttery: the easiest Italian DOP to sell to a first-time buyer.</li>
+          <li><b>Everyday price point.</b> Fresco sits below the aged tier, so it moves weekly, not seasonally.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <div class="panel-h">MERCHANDISING</div>
+        <ul>
+          <li><b>Grab-and-go set.</b> Cut-and-wrap labor eliminated — ships shelf-ready in printed film.</li>
+          <li><b>Cross-merchandise</b> with prosciutto, table crackers and Northern Italian reds.</li>
+          <li><b>Trade up</b> from commodity Asiago-style domestics to the Consorzio-certified original.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <div class="panel-h">KITCHEN &amp; MENU</div>
+        <ul>
+          <li><b>Melts clean</b> — panini, baked pasta, polenta and frittata.</li>
+          <li><b>Cheese board</b> anchor at room temperature with honey, pear and walnuts.</li>
+          <li><b>Shred or slice</b> for sandwich programs where a mild Alpine note is wanted.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- COMPANION ITEM -->
+    <div class="companion">
+      <div>
+        <div class="c-l">ALREADY STOCKED AT ACE — SAME CHEESE, FOODSERVICE FORMAT</div>
+        <div class="c-t">Asiago Fresco DOP — 1/4 Wheel</div>
+        <div class="c-d">1 pc/case · 7 lb avg · cow, whole · 20–40 days. Pair the wedge on the shelf with the quarter wheel behind the deli counter.</div>
+      </div>
+      <div class="c-r">
+        <div class="n">MT ITEM 2073 · ACE ITEM 223293</div>
+        <div class="s">Currently listed</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div>
+      <div class="co">MONTI TRENTINI USA</div>
+      <div class="line">Richard Posada · sales@montitrentini-usa.com · montitrentini.com</div>
+      <div class="fine">Product photography enhanced for print (background &amp; color correction) · Specs subject to confirmation.</div>
+    </div>
+    <div class="it">Caseria Monti Trentini S.p.A. · Grigno Valsugana (TN) · Italia</div>
+  </div>
+
+</body>
+</html>
