@@ -33,22 +33,35 @@ Any browser's **Print → Save as PDF** at 100% scale with headers/footers off a
   uppercase, for labels and spec values
 - Page margin 0.48 in · top green bar 10.5 pt · footer band 0.74 in
 
-## OPEN FIELDS — must be filled before this goes to ACE
+## Confirmed specs
+
+- **Case pack:** 12 pc/case
+- **Net weight:** 7 oz (198 g) per wedge
+- **Case net weight:** 5.25 lb (2.38 kg) — derived, 12 × 7 oz
+- **Format:** exact-weight wedge, printed vacuum film
+- **Milk / age / storage:** whole cow, 20–40 days, 34–40 °F *(carried from the line card — verify)*
+
+## OPEN FIELDS — still needed before this goes to ACE
 
 The spec grid and item bar carry visible placeholders (`—`) plus an on-sheet amber
 "Pending for item setup" note. Remove that note once the fields below are confirmed.
 
 1. **MT item number** — not yet assigned/known for the retail wedge
 2. **ACE item number** — new item, to be assigned by ACE Endico
-3. **Case pack** (pc/case)
-4. **Net weight** (oz / g per wedge)
-5. **UPC / GTIN** — retail pack needs a scannable UPC
-6. **Shelf life** (days from pack date)
-7. **Case cube, Ti-Hi, landed cost** — not on the sheet, but ACE will ask at setup
+3. **UPC / GTIN** — retail pack needs a scannable code
+4. **Shelf life** (days from pack date)
+5. **Case cube, Ti-Hi, landed cost** — not on the sheet, but ACE will ask at setup
 
 Also verify against the current Caseria Monti Trentini spec sheet before distribution:
 DOP designation and consortium authorization, minimum age (sheet states 20–40 days, carried
 over from the 1/4-wheel line-card entry), milk type, and storage temperature.
+
+### US retail labeling — separate from this sheet
+
+The pack in the photo is Italian-market artwork. A 7 oz wedge sold at US retail needs a
+US-compliant label: net contents in oz and g, ingredient statement, allergen declaration
+(milk), Nutrition Facts panel, and the importer/distributor name and address. Worth
+confirming with the Caseria which artwork version ships to ACE before the sheet circulates.
 
 ## AI compliance
 
