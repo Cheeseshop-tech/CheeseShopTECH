@@ -52,8 +52,8 @@ The spec grid and item bar carry visible placeholders (`—`) plus an on-sheet a
    "ATM PF" = modified-atmosphere flow pack, both consistent with this item. Confirm against the current price list before sending.
 2. **ACE item number** — new item, to be assigned by ACE Endico
 3. **UPC / GTIN** — retail pack needs a scannable code
-4. **Shelf life** (days from pack date)
-5. **Case cube, Ti-Hi, landed cost** — not on the sheet, but ACE will ask at setup
+4. **Shelf life, case cube, Ti-Hi, landed cost** — deliberately *not* on the sheet (see below),
+   but ACE will ask for all four at item setup
 
 Also verify against the current Caseria Monti Trentini spec sheet before distribution:
 DOP designation and consortium authorization, minimum age (sheet states 20–40 days, carried
@@ -65,6 +65,13 @@ The pack in the photo is Italian-market artwork. A 7 oz wedge sold at US retail 
 US-compliant label: net contents in oz and g, ingredient statement, allergen declaration
 (milk), Nutrition Facts panel, and the importer/distributor name and address. Worth
 confirming with the Caseria which artwork version ships to ACE before the sheet circulates.
+
+### What is deliberately off the sheet
+
+This is a customer-facing retail sell sheet, not a spec sheet. **Shelf life is intentionally
+omitted** — it is item-setup data for the buyer's system, not a reason a retailer stocks the
+item. Its grid cell carries **Origin** instead. Case cube, Ti-Hi and landed cost are off the
+sheet for the same reason. All of it still has to be supplied to ACE separately at setup.
 
 ## Consorzio Asiago mark — not yet placed
 
