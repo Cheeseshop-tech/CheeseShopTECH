@@ -36,9 +36,9 @@ Any browser's **Print → Save as PDF** at 100% scale with headers/footers off a
 ## Confirmed specs
 
 - **Case pack:** 12 pc/case
-- **Net weight:** 7 oz (198 g) per wedge
+- **Net weight:** 7 oz (200 g) per wedge
 - **Case net weight:** 5.25 lb (2.38 kg) — derived, 12 × 7 oz
-- **Format:** exact-weight wedge, printed vacuum film
+- **Format:** exact-weight wedge, **flow-packed (ATM)** — not vacuum-sealed
 - **Milk / age / storage:** whole cow, 20–40 days, 34–40 °F *(carried from the line card — verify)*
 
 ## OPEN FIELDS — still needed before this goes to ACE
@@ -46,7 +46,10 @@ Any browser's **Print → Save as PDF** at 100% scale with headers/footers off a
 The spec grid and item bar carry visible placeholders (`—`) plus an on-sheet amber
 "Pending for item setup" note. Remove that note once the fields below are confirmed.
 
-1. **MT item number** — not yet assigned/known for the retail wedge
+1. **MT item number — 02091 (needs confirmation).** Identified from the media hub: Cloudinary
+   `monti-trentini/asiago/asiago-pressato-dop-200g-atm-pf-02091` and Drive
+   `02091_ASIAGO PRESSATO DOP 200 G ATM PF.png`. 200 g = 7.05 oz and "ATM PF" = modified-atmosphere
+   flow pack, both consistent with this item. Confirm against the current price list before sending.
 2. **ACE item number** — new item, to be assigned by ACE Endico
 3. **UPC / GTIN** — retail pack needs a scannable code
 4. **Shelf life** (days from pack date)
@@ -62,6 +65,29 @@ The pack in the photo is Italian-market artwork. A 7 oz wedge sold at US retail 
 US-compliant label: net contents in oz and g, ingredient statement, allergen declaration
 (milk), Nutrition Facts panel, and the importer/distributor name and address. Worth
 confirming with the Caseria which artwork version ships to ACE before the sheet circulates.
+
+## Consorzio Asiago mark — not yet placed
+
+The sheet reserves a correctly-sized slot (dashed box, 54 × 26 pt) next to the DOP credential
+line for the official **Consorzio Tutela Formaggio Asiago** mark. It is empty on purpose.
+
+The official artwork exists in the media hub at Cloudinary
+`monti-trentini/marks/consorzio-asiago.png` (401 × 308, tagged `official-artwork`), but
+`res.cloudinary.com` is **blocked by this workspace's egress policy**, so this session could
+not download it. Attempting to rebuild the mark from the pack photograph produced distorted
+letterforms — unacceptable for a certification mark — so nothing was placed rather than
+placing something wrong.
+
+To finish it: drop `consorzio-asiago.png` into `img/` and replace the slot markup with
+
+```html
+<img class="cred-mark" src="img/consorzio-asiago.png" alt="Consorzio Tutela Formaggio Asiago">
+```
+
+styled `height:26pt; width:auto;`. Everything around it is already positioned.
+
+Note that this is a third-party certification mark: use it only in the official artwork,
+undistorted, under Monti Trentini's authorization N. 41/95.
 
 ## AI compliance
 

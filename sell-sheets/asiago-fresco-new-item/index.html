@@ -82,7 +82,7 @@
   .seal{ width:26pt; flex:0 0 auto; }
   .blurb{
     font-family:"Playfair Display",Georgia,serif; font-style:italic; font-weight:400;
-    font-size:11pt; line-height:1.45; color:var(--ink); margin-top:8pt;
+    font-size:10.5pt; line-height:1.42; color:var(--ink); margin-top:8pt;
   }
 
   /* ---------- spec grid ---------- */
@@ -114,21 +114,43 @@
   }
   .pending b{ font-weight:700; letter-spacing:.09em; }
 
+  /* ---------- flow-pack callout ---------- */
+  .callout{
+    margin-top:8pt; border-left:2.5pt solid var(--mt-green); background:var(--tint);
+    padding:5pt 9pt; font-size:7.5pt; font-weight:400; line-height:1.42; color:var(--ink);
+    border-radius:0 2pt 2pt 0;
+  }
+  .callout b{ font-weight:700; color:var(--mt-green-dark); }
+
+  /* ---------- consorzio credential ---------- */
+  .cred{
+    margin-top:7pt; display:flex; align-items:center; gap:9pt;
+    border:1px solid var(--line); border-radius:2pt; padding:5pt 9pt;
+  }
+  .cred-slot{
+    flex:0 0 auto; width:54pt; height:26pt; border:1px dashed #B7C3BC; border-radius:2pt;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    font-size:6.6pt; font-weight:700; letter-spacing:.06em; color:#9AA5A0; line-height:1.15;
+  }
+  .cred-slot span{ font-size:4.6pt; font-weight:500; letter-spacing:.04em; }
+  .cred-1{ font-size:6.4pt; font-weight:700; letter-spacing:.11em; color:var(--mt-green-dark); }
+  .cred-2{ font-size:7pt; font-weight:400; color:var(--label); margin-top:2pt; }
+
   /* ---------- lower panels ---------- */
-  .panels{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:14pt; margin-top:24pt; }
+  .panels{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:14pt; margin-top:10pt; }
   .panel-h{
     font-size:7pt; font-weight:700; letter-spacing:.13em; color:var(--mt-green-dark);
     padding-bottom:4pt; border-bottom:1.2pt solid var(--rule);
   }
   .panel ul{ list-style:none; margin-top:7pt; }
-  .panel li{ font-size:8pt; font-weight:400; line-height:1.45; color:var(--ink); padding-left:9pt; position:relative; margin-bottom:5pt; }
+  .panel li{ font-size:7.8pt; font-weight:400; line-height:1.42; color:var(--ink); padding-left:9pt; position:relative; margin-bottom:3pt; }
   .panel li::before{ content:"·"; position:absolute; left:2pt; color:var(--mt-green); font-weight:700; }
   .panel li b{ font-weight:600; color:var(--mt-green-dark); }
 
   /* ---------- companion strip ---------- */
   .companion{
-    margin-top:22pt; border:1px solid var(--line); border-radius:3pt; background:var(--tint);
-    padding:8pt 11pt; display:flex; align-items:center; justify-content:space-between; gap:12pt;
+    margin-top:9pt; border:1px solid var(--line); border-radius:3pt; background:var(--tint);
+    padding:5pt 11pt; display:flex; align-items:center; justify-content:space-between; gap:12pt;
   }
   .companion .c-l{ font-size:6.5pt; font-weight:600; letter-spacing:.12em; color:var(--label); }
   .companion .c-t{
@@ -162,20 +184,20 @@
 
     <!-- TITLE -->
     <div class="title">New for the Retail Case</div>
-    <div class="kicker">CASARI DAL 1925 · GRIGNO VALSUGANA (TN) · ASIAGO FRESCO DOP · 12 × 7 OZ EXACT-WEIGHT WEDGE</div>
+    <div class="kicker">CASARI DAL 1925 · GRIGNO VALSUGANA (TN) · ASIAGO FRESCO DOP · 12 × 7 OZ FLOW-PACKED WEDGE</div>
     <div class="rule"></div>
 
     <!-- HERO -->
     <div class="hero">
       <div class="tile">
-        <img src="img/asiago-fresco-pack.jpg" alt="Monti Trentini Asiago DOP Fresco retail wedge in printed film">
+        <img src="img/asiago-fresco-pack.jpg" alt="Monti Trentini Asiago DOP Fresco 7 oz flow-packed retail wedge">
       </div>
 
       <div class="hero-body">
         <div class="hero-head">
           <div>
             <div class="prod-name">Asiago Fresco DOP</div>
-            <div class="prod-sub">NEW ITEM · EXACT-WEIGHT WEDGE · PRINTED VACUUM FILM</div>
+            <div class="prod-sub">NEW ITEM · 7 OZ EXACT-WEIGHT WEDGE · FLOW-PACKED</div>
           </div>
           <img class="seal" src="img/dop-seal.png" alt="Protected Designation of Origin">
         </div>
@@ -187,9 +209,16 @@
           credentials on the face of the pack.
         </div>
 
+
+        <div class="callout">
+          <b>Flow-packed, not vacuum-sealed.</b> The film is wrapped around the wedge rather than
+          drawn down onto it, so the paste is never compressed. Fresco's supple, elastic texture —
+          which is where most of the eating experience lives — reaches the case intact.
+        </div>
+
         <div class="grid">
           <div class="cell"><div class="l">CASE PACK</div><div class="v">12 pc/case</div></div>
-          <div class="cell"><div class="l">NET WEIGHT</div><div class="v">7 oz (198 g)</div></div>
+          <div class="cell"><div class="l">NET WEIGHT</div><div class="v">7 oz (200 g)</div></div>
           <div class="cell"><div class="l">MILK</div><div class="v">Cow, whole</div></div>
           <div class="cell"><div class="l">AGE</div><div class="v">20–40 days</div></div>
           <div class="cell"><div class="l">CASE NET WT</div><div class="v">5.25 lb (2.38 kg)</div></div>
@@ -199,16 +228,23 @@
         </div>
 
         <div class="itembar">
-          <span>MT ITEM —</span>
+          <span>MT ITEM 02091</span>
           <span class="dot">·</span>
           <span>ACE ITEM —</span>
           <span class="new">NEW</span>
         </div>
 
         <div class="pending">
-          <b>PENDING FOR ITEM SETUP:</b> MT item number, ACE item number, UPC/GTIN, shelf life,
-          case cube &amp; Ti-Hi, landed cost. Confirm with Caseria Monti Trentini and verify all DOP, age
-          and nutrition copy against the current spec sheet before distribution.
+          <b>PENDING FOR ITEM SETUP:</b> confirm MT item 02091, ACE item number, UPC/GTIN, shelf life,
+          case cube &amp; Ti-Hi, landed cost. Verify DOP, age and nutrition copy against the current Caseria spec sheet before distribution.
+        </div>
+  
+        <div class="cred">
+          <div class="cred-slot">ASIAGO<br><span>consortium mark</span></div>
+          <div class="cred-txt">
+            <div class="cred-1">DENOMINAZIONE DI ORIGINE PROTETTA</div>
+            <div class="cred-2">Consorzio Tutela Formaggio Asiago · Autorizzazione N. 41/95</div>
+          </div>
         </div>
       </div>
     </div>
@@ -246,7 +282,7 @@
       <div>
         <div class="c-l">ALREADY STOCKED AT ACE — SAME CHEESE, FOODSERVICE FORMAT</div>
         <div class="c-t">Asiago Fresco DOP — 1/4 Wheel</div>
-        <div class="c-d">1 pc/case · 7 lb avg · cow, whole · 20–40 days. Pair the wedge on the shelf with the quarter wheel behind the deli counter.</div>
+        <div class="c-d">1 pc/case · 7 lb avg · cow, whole · 20–40 days — the same cheese, cut behind the counter.</div>
       </div>
       <div class="c-r">
         <div class="n">MT ITEM 2073 · ACE ITEM 223293</div>
