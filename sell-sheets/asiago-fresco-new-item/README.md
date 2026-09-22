@@ -36,8 +36,8 @@ Any browser's **Print → Save as PDF** at 100% scale with headers/footers off a
 ## Confirmed specs
 
 - **Case pack:** 12 pc/case
-- **Net weight:** 7 oz (200 g) per wedge
-- **Case net weight:** 5.25 lb (2.38 kg) — derived, 12 × 7 oz
+- **Net weight:** 7 oz per wedge (as stated on the packaging and used in the US trade)
+- **Case net weight:** 5.25 lb — derived, 12 × 7 oz
 - **Format:** exact-weight wedge, **flow-packed (ATM)** — not vacuum-sealed
 - **Milk / age / storage:** whole cow, 20–40 days, 34–40 °F *(carried from the line card — verify)*
 
@@ -48,8 +48,8 @@ The spec grid and item bar carry visible placeholders (`—`) plus an on-sheet a
 
 1. **MT item number — 02091 (needs confirmation).** Identified from the media hub: Cloudinary
    `monti-trentini/asiago/asiago-pressato-dop-200g-atm-pf-02091` and Drive
-   `02091_ASIAGO PRESSATO DOP 200 G ATM PF.png`. 200 g = 7.05 oz and "ATM PF" = modified-atmosphere
-   flow pack, both consistent with this item. Confirm against the current price list before sending.
+   `02091_ASIAGO PRESSATO DOP 200 G ATM PF.png`. The 200 g Italian spec is the 7 oz US pack, and
+   "ATM PF" = modified-atmosphere flow pack, both consistent with this item. Confirm against the current price list before sending.
 2. **ACE item number** — new item, to be assigned by ACE Endico
 3. **UPC / GTIN** — retail pack needs a scannable code
 4. **Shelf life** (days from pack date)
