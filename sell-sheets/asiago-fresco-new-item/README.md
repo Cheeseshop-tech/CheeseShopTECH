@@ -35,6 +35,7 @@ Any browser's **Print → Save as PDF** at 100% scale with headers/footers off a
 
 ## Confirmed specs
 
+- **ACE item:** 228971
 - **Case pack:** 12 pc/case
 - **Net weight:** 7 oz per wedge (as stated on the packaging and used in the US trade)
 - **Case net weight:** 5.25 lb — derived, 12 × 7 oz
@@ -50,9 +51,8 @@ The spec grid and item bar carry visible placeholders (`—`) plus an on-sheet a
    `monti-trentini/asiago/asiago-pressato-dop-200g-atm-pf-02091` and Drive
    `02091_ASIAGO PRESSATO DOP 200 G ATM PF.png`. The 200 g Italian spec is the 7 oz US pack, and
    "ATM PF" = modified-atmosphere flow pack, both consistent with this item. Confirm against the current price list before sending.
-2. **ACE item number** — new item, to be assigned by ACE Endico
-3. **UPC / GTIN** — retail pack needs a scannable code
-4. **Shelf life, case cube, Ti-Hi, landed cost** — deliberately *not* on the sheet (see below),
+2. **UPC / GTIN** — retail pack needs a scannable code; last blank left on the sheet
+3. **Shelf life, case cube, Ti-Hi, landed cost** — deliberately *not* on the sheet (see below),
    but ACE will ask for all four at item setup
 
 Also verify against the current Caseria Monti Trentini spec sheet before distribution:
